@@ -22,12 +22,12 @@ object RetrofitInstance {
         .add(KotlinJsonAdapterFactory())
         .build()
 
-    val api: PostApi by lazy {
+    val api: JsonPlaceholderApi by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(client)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
-            .create(PostApi::class.java)
+            .create(JsonPlaceholderApi::class.java)
     }
 }

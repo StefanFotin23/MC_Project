@@ -11,8 +11,8 @@ class MobileComputingProjectApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         db = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java, "posts_db"
-        ).build()
+                applicationContext,
+                AppDatabase::class.java, "posts_db"
+            ).fallbackToDestructiveMigration(false).build()
     }
 }

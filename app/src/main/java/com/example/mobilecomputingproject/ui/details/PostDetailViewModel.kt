@@ -24,7 +24,7 @@ class PostDetailViewModel(
 ) : ViewModel() {
 
     private val repository = PostRepository(db)
-    private val postId: Int = checkNotNull(savedStateHandle["postId"])
+    private val postId: Int = (savedStateHandle.get<String>("postId")!!).toInt()
 
     val uiState: StateFlow<PostDetailUiState> = repository.getPostById(postId)
         .map { PostDetailUiState(post = it, isLoading = false) }
