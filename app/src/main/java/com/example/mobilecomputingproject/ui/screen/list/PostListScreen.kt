@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Photo
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.WineBar
 import androidx.compose.material3.BottomAppBar
 import androidx.navigation.NavController
@@ -32,8 +31,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -43,14 +40,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.mobilecomputingproject.R
 import com.example.mobilecomputingproject.domain.model.Post
 import com.example.mobilecomputingproject.domain.model.User
 import com.example.mobilecomputingproject.ui.viewmodel.list.PostListViewModel
@@ -66,12 +61,6 @@ fun PostListScreen(
 
     Scaffold(
         containerColor = Color.Transparent,
-        topBar = {
-            TopAppBar(
-                title = { Text(text = stringResource(id = R.string.app_name)) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
-            )
-        },
         bottomBar = {
             BottomAppBar(containerColor = Color.White) {
                 Row(
@@ -101,9 +90,11 @@ fun PostListScreen(
             }
         }
     ) { paddingValues ->
-        Column(modifier = Modifier
-            .padding(paddingValues)
-            .background(Color.White)) {
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .background(Color.White)
+        ) {
             FilterSection(
                 viewModel = viewModel,
                 authorSearchExpanded = authorSearchExpanded,
@@ -134,18 +125,27 @@ fun FilterSection(
             .fillMaxWidth()
             .background(Color.White)
             .padding(horizontal = 8.dp, vertical = 4.dp)
-            .height(50.dp),
+            .height(75.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text("\tFilters", fontWeight = FontWeight.Bold, color = Color.Black)
+        Text("\tFilters", fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 20.sp)
         Row(horizontalArrangement = Arrangement.End) {
-            val starTint = if (uiState.isTopRatedFilterActive) MaterialTheme.colorScheme.primary else Color.Black
+            val starTint =
+                if (uiState.isTopRatedFilterActive) MaterialTheme.colorScheme.primary else Color.Black
             IconButton(onClick = { viewModel.toggleTopRatedFilter() }) {
-                Icon(Icons.Default.WineBar, contentDescription = "Filter by Top Rated", tint = starTint)
+                Icon(
+                    Icons.Default.WineBar,
+                    contentDescription = "Filter by Top Rated",
+                    tint = starTint
+                )
             }
             IconButton(onClick = { onAuthorSearchExpandedChange(!authorSearchExpanded) }) {
-                Icon(Icons.Default.Person, contentDescription = "Filter by Author", tint = Color.Black)
+                Icon(
+                    Icons.Default.Person,
+                    contentDescription = "Filter by Author",
+                    tint = Color.Black
+                )
             }
             DropdownMenu(
                 expanded = authorSearchExpanded,
@@ -167,12 +167,13 @@ fun FilterSection(
                         }
                     }
                 )
-                uiState.users.filter { it.name.contains(uiState.searchQuery, ignoreCase = true) }.forEach { user ->
-                    DropdownMenuItem(text = { Text(user.name) }, onClick = { 
-                        viewModel.onUserSelected(user)
-                        onAuthorSearchExpandedChange(false)
-                    })
-                }
+                uiState.users.filter { it.name.contains(uiState.searchQuery, ignoreCase = true) }
+                    .forEach { user ->
+                        DropdownMenuItem(text = { Text(user.name) }, onClick = {
+                            viewModel.onUserSelected(user)
+                            onAuthorSearchExpandedChange(false)
+                        })
+                    }
             }
         }
     }
