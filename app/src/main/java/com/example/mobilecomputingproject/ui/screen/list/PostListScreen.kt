@@ -2,25 +2,30 @@ package com.example.mobilecomputingproject.ui.screen.list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.WineBar
 import androidx.compose.material3.BottomAppBar
-import androidx.navigation.NavController
-import com.example.mobilecomputingproject.ui.navigation.Routes
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -31,6 +36,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -39,15 +45,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import com.example.mobilecomputingproject.R
 import com.example.mobilecomputingproject.domain.model.Post
 import com.example.mobilecomputingproject.domain.model.User
+import com.example.mobilecomputingproject.ui.navigation.Routes
+import com.example.mobilecomputingproject.ui.theme.LightningRed
+import com.example.mobilecomputingproject.ui.theme.LightningYellow
 import com.example.mobilecomputingproject.ui.viewmodel.list.PostListViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,6 +76,7 @@ fun PostListScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var authorSearchExpanded by remember { mutableStateOf(false) }
+    var selectedPost by remember { mutableStateOf<Post?>(null) }
 
     Scaffold(
         containerColor = Color.Transparent,
@@ -103,10 +122,20 @@ fun PostListScreen(
             Column(modifier = Modifier.padding(16.dp)) {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(uiState.posts) { post ->
-                        PostItem(post = post, author = uiState.users.find { it.id == post.userId })
+                        PostItem(
+                            post = post,
+                            author = uiState.users.find { it.id == post.userId }) {
+                            selectedPost = post
+                        }
                     }
                 }
             }
+        }
+    }
+
+    selectedPost?.let { post ->
+        PostDetailPopup(post = post) {
+            selectedPost = null
         }
     }
 }
@@ -129,7 +158,7 @@ fun FilterSection(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text("\tFilters", fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 20.sp)
+        Text("	Filters", fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 20.sp)
         Row(horizontalArrangement = Arrangement.End) {
             val starTint =
                 if (uiState.isTopRatedFilterActive) MaterialTheme.colorScheme.primary else Color.Black
@@ -180,12 +209,13 @@ fun FilterSection(
 }
 
 @Composable
-fun PostItem(post: Post, author: User?) {
+fun PostItem(post: Post, author: User?, onClick: (Post) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
-            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp)),
+            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
+            .clickable { onClick(post) },
         shape = RoundedCornerShape(8.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -213,7 +243,74 @@ fun PostItem(post: Post, author: User?) {
                 }
             }
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = post.body.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() })
+                Text(
+                    text = post.body.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun PostDetailPopup(post: Post, onClose: () -> Unit) {
+    Dialog(
+        onDismissRequest = onClose,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .fillMaxHeight(0.8f)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Top
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = post.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.weight(1f) // Allow text to take available space
+                    )
+                    IconButton(
+                        onClick = onClose
+                    ) {
+                        Icon(
+                            Icons.Default.Close,
+                            contentDescription = "Close",
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                }
+                // TODO: Clarify image source for post detail popup
+                AsyncImage(
+                    model = "https://via.placeholder.com/400", // Placeholder image
+                    contentDescription = "Post Image",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentScale = ContentScale.Crop
+                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.Top
+                ) {
+                    Text(text = post.body.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() })
+                }
             }
         }
     }

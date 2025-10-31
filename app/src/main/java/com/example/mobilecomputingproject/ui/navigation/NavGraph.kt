@@ -70,7 +70,7 @@ fun NavGraph(navController: NavHostController) {
         }
 
         composable(Routes.PHOTO_LIST) {
-            PhotoListScreen()
+            PhotoListScreen(navController = navController)
         }
 
         composable(Routes.PHOTO_DETAIL) { backStackEntry ->

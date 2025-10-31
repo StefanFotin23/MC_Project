@@ -32,10 +32,17 @@ import com.example.mobilecomputingproject.R
 import com.example.mobilecomputingproject.domain.model.Photo
 import com.example.mobilecomputingproject.ui.viewmodel.list.PhotoListViewModel
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.navigation.NavController
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PhotoListScreen(
-    viewModel: PhotoListViewModel = hiltViewModel()
+    viewModel: PhotoListViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -43,7 +50,12 @@ fun PhotoListScreen(
         topBar = {
             TopAppBar(
                 title = { Text(text = "Photos") },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
+                actions = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
             )
         }
     ) { paddingValues ->
@@ -86,7 +98,7 @@ fun PhotoItem(photo: Photo) {
                 contentScale = ContentScale.Crop
             )
             Text(
-                text = photo.title,
+                text = photo.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
                 modifier = Modifier.padding(8.dp),
                 style = MaterialTheme.typography.titleMedium
             )
