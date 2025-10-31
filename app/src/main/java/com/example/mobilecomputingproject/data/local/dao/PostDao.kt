@@ -28,6 +28,9 @@ interface PostDao {
     @Query("DELETE FROM posts")
     suspend fun clearAll()
 
+    @Query("UPDATE posts SET isFavorite = :isFavorite WHERE id = :postId")
+    suspend fun updateFavoriteStatus(postId: Int, isFavorite: Boolean)
+
     suspend fun clearAndInsert(posts: List<PostEntity>) {
         clearAll()
         insertAll(posts)

@@ -26,7 +26,8 @@ data class PostListUiState(
     val users: List<User> = emptyList(),
     val searchQuery: String = "",
     val selectedUser: User? = null,
-    val isTopRatedFilterActive: Boolean = false
+    val isTopRatedFilterActive: Boolean = false,
+    val showFavoritesOnly: Boolean = false
 )
 
 @HiltViewModel
@@ -65,11 +66,17 @@ class PostListViewModel @Inject constructor(
                     posts
                 }
 
+                val favoriteFilteredPosts = if (uiState.showFavoritesOnly) {
+                    filteredPosts.filter { it.isFavorite }
+                } else {
+                    filteredPosts
+                }
+
                 val sortedPosts = if (uiState.isTopRatedFilterActive) {
-                    val postsWithCommentCount = getPostsWithCommentCounts(filteredPosts)
+                    val postsWithCommentCount = getPostsWithCommentCounts(favoriteFilteredPosts)
                     postsWithCommentCount.sortedByDescending { it.second }.map { it.first }
                 } else {
-                    filteredPosts.sortedByDescending { it.id }
+                    favoriteFilteredPosts.sortedByDescending { it.id }
                 }
 
                 uiState.copy(posts = sortedPosts, users = users)
@@ -81,6 +88,10 @@ class PostListViewModel @Inject constructor(
 
     fun toggleTopRatedFilter() {
         _uiState.update { it.copy(isTopRatedFilterActive = !it.isTopRatedFilterActive) }
+    }
+
+    fun toggleShowFavoritesOnly() {
+        _uiState.update { it.copy(showFavoritesOnly = !it.showFavoritesOnly) }
     }
 
     fun onSearchQueryChanged(query: String) {
@@ -95,11 +106,16 @@ class PostListViewModel @Inject constructor(
 
             postRepository.getPostsByUser(user.id)
                 .collect { posts ->
+                    val favoriteFilteredPosts = if (_uiState.value.showFavoritesOnly) {
+                        posts.filter { it.isFavorite }
+                    } else {
+                        posts
+                    }
                     val sortedPosts = if (_uiState.value.isTopRatedFilterActive) {
-                        val postsWithCommentCount = getPostsWithCommentCounts(posts)
+                        val postsWithCommentCount = getPostsWithCommentCounts(favoriteFilteredPosts)
                         postsWithCommentCount.sortedByDescending { it.second }.map { it.first }
                     } else {
-                        posts.sortedByDescending { it.id }
+                        favoriteFilteredPosts.sortedByDescending { it.id }
                     }
                     _uiState.update { it.copy(posts = sortedPosts) }
                 }
@@ -114,14 +130,25 @@ class PostListViewModel @Inject constructor(
 
             postRepository.getPosts()
                 .collect { posts ->
+                    val favoriteFilteredPosts = if (_uiState.value.showFavoritesOnly) {
+                        posts.filter { it.isFavorite }
+                    } else {
+                        posts
+                    }
                     val sortedPosts = if (_uiState.value.isTopRatedFilterActive) {
-                        val postsWithCommentCount = getPostsWithCommentCounts(posts)
+                        val postsWithCommentCount = getPostsWithCommentCounts(favoriteFilteredPosts)
                         postsWithCommentCount.sortedByDescending { it.second }.map { it.first }
                     } else {
-                        posts.sortedByDescending { it.id }
+                        favoriteFilteredPosts.sortedByDescending { it.id }
                     }
                     _uiState.update { it.copy(posts = sortedPosts) }
                 }
+        }
+    }
+
+    fun toggleFavoriteStatus(postId: Int, isFavorite: Boolean) {
+        viewModelScope.launch {
+            postRepository.updateFavoriteStatus(postId, isFavorite)
         }
     }
 }

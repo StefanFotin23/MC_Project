@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Photo
@@ -100,8 +101,10 @@ fun PostListScreen(
                         Text("Photos")
                     }
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        IconButton(onClick = { /*TODO: Navigate to Favorites screen*/ }) {
-                            Icon(Icons.Default.Favorite, contentDescription = "Favorites")
+                        val favoriteIcon = if (uiState.showFavoritesOnly) Icons.Default.Favorite else Icons.Default.FavoriteBorder
+                        val favoriteTint = if (uiState.showFavoritesOnly) MaterialTheme.colorScheme.primary else Color.Black
+                        IconButton(onClick = { viewModel.toggleShowFavoritesOnly() }) {
+                            Icon(favoriteIcon, contentDescription = "Favorites", tint = favoriteTint)
                         }
                         Text("Favorites")
                     }
@@ -134,7 +137,7 @@ fun PostListScreen(
     }
 
     selectedPost?.let { post ->
-        PostDetailPopup(post = post) {
+        PostDetailPopup(post = post, viewModel = viewModel) {
             selectedPost = null
         }
     }
@@ -254,7 +257,7 @@ fun PostItem(post: Post, author: User?, onClick: (Post) -> Unit) {
 }
 
 @Composable
-fun PostDetailPopup(post: Post, onClose: () -> Unit) {
+fun PostDetailPopup(post: Post, viewModel: PostListViewModel, onClose: () -> Unit) {
     Dialog(
         onDismissRequest = onClose,
         properties = DialogProperties(usePlatformDefaultWidth = false)
@@ -283,14 +286,17 @@ fun PostDetailPopup(post: Post, onClose: () -> Unit) {
                         color = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.weight(1f) // Allow text to take available space
                     )
-                    IconButton(
-                        onClick = onClose
-                    ) {
-                        Icon(
-                            Icons.Default.Close,
-                            contentDescription = "Close",
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
+                    Row {
+                        val favoriteIcon = if (post.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
+                        val favoriteTint = if (post.isFavorite) Color.Red else MaterialTheme.colorScheme.onPrimary
+                        IconButton(onClick = { viewModel.toggleFavoriteStatus(post.id, !post.isFavorite) }) {
+                            Icon(favoriteIcon, contentDescription = "Toggle Favorite", tint = favoriteTint)
+                        }
+                        IconButton(
+                            onClick = onClose
+                        ) {
+                            Icon(Icons.Default.Close, contentDescription = "Close", tint = MaterialTheme.colorScheme.onPrimary)
+                        }
                     }
                 }
                 // TODO: Clarify image source for post detail popup

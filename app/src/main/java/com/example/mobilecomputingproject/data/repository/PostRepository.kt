@@ -68,6 +68,15 @@ class PostRepository(
     /**
      * Fetches posts for a specific user from the API and saves them to the local cache.
      */
+    suspend fun updateFavoriteStatus(postId: Int, isFavorite: Boolean) {
+        withContext(Dispatchers.IO) {
+            postDao.updateFavoriteStatus(postId, isFavorite)
+        }
+    }
+
+    /**
+     * Fetches posts for a specific user from the API and saves them to the local cache.
+     */
     suspend fun refreshPostsByUser(userId: Int) {
         withContext(Dispatchers.IO) {
             try {

@@ -9,8 +9,9 @@ data class PostEntity(
     @PrimaryKey val id: Int,
     val userId: Int,
     val title: String,
-    val body: String
+    val body: String,
+    val isFavorite: Boolean = false
 )
 
-fun PostEntity.toDomain(): Post = Post(id, userId, title, body)
-fun Post.toEntity(): PostEntity = PostEntity(id, userId, title, body)
+fun PostEntity.toDomain(): Post = Post(id, userId, title, body, isFavorite)
+fun Post.toEntity(): PostEntity = PostEntity(id, userId, title, body, isFavorite)
