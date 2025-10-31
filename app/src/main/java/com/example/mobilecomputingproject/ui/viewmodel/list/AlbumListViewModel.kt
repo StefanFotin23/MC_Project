@@ -2,15 +2,15 @@ package com.example.mobilecomputingproject.ui.viewmodel.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mobilecomputingproject.data.local.AppDatabase
 import com.example.mobilecomputingproject.data.repository.AlbumRepository
 import com.example.mobilecomputingproject.domain.model.Album
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.Collections.emptyList
+import javax.inject.Inject
 
 data class AlbumListUiState(
     val albums: List<Album> = emptyList(),
@@ -18,9 +18,10 @@ data class AlbumListUiState(
     val error: String? = null
 )
 
-class AlbumListViewModel(private val db: AppDatabase) : ViewModel() {
-
-    private val repository = AlbumRepository(db)
+@HiltViewModel
+class AlbumListViewModel @Inject constructor(
+    private val repository: AlbumRepository
+) : ViewModel() {
 
     val uiState: StateFlow<AlbumListUiState> = repository.getAlbums()
         .map { AlbumListUiState(albums = it) }

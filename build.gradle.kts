@@ -3,4 +3,5 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.versions)
+    alias(libs.plugins.hilt.android) apply false
 }

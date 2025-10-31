@@ -3,14 +3,15 @@ package com.example.mobilecomputingproject.ui.viewmodel.details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mobilecomputingproject.data.local.AppDatabase
 import com.example.mobilecomputingproject.data.repository.TodoRepository
 import com.example.mobilecomputingproject.domain.model.Todo
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class TodoDetailUiState(
     val todo: Todo? = null,
@@ -18,12 +19,12 @@ data class TodoDetailUiState(
     val error: String? = null
 )
 
-class TodoDetailViewModel(
-    private val db: AppDatabase,
+@HiltViewModel
+class TodoDetailViewModel @Inject constructor(
+    private val repository: TodoRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val repository = TodoRepository(db)
     private val todoId: Int = checkNotNull(savedStateHandle["todoId"])
 
     val uiState: StateFlow<TodoDetailUiState> = repository.getTodoById(todoId)

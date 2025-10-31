@@ -23,23 +23,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.mobilecomputingproject.MobileComputingProjectApplication
-import com.example.mobilecomputingproject.ui.ViewModelFactory
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobilecomputingproject.ui.viewmodel.details.CommentDetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentDetailScreen(
     commentId: Int,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    viewModel: CommentDetailViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-    val application = context.applicationContext as MobileComputingProjectApplication
-    val db = application.db
-
-    val factory = ViewModelFactory(db)
-    val viewModel: CommentDetailViewModel = viewModel(factory = factory, key = commentId.toString())
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(

@@ -3,14 +3,15 @@ package com.example.mobilecomputingproject.ui.viewmodel.details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mobilecomputingproject.data.local.AppDatabase
 import com.example.mobilecomputingproject.data.repository.PostRepository
 import com.example.mobilecomputingproject.domain.model.Post
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class PostDetailUiState(
     val post: Post? = null,
@@ -18,12 +19,12 @@ data class PostDetailUiState(
     val error: String? = null
 )
 
-class PostDetailViewModel(
-    private val db: AppDatabase,
+@HiltViewModel
+class PostDetailViewModel @Inject constructor(
+    private val repository: PostRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val repository = PostRepository(db)
     private val postId: Int = (savedStateHandle.get<String>("postId")!!).toInt()
 
     val uiState: StateFlow<PostDetailUiState> = repository.getPostById(postId)

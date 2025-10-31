@@ -1,18 +1,7 @@
 package com.example.mobilecomputingproject
 
 import android.app.Application
-import androidx.room.Room
-import com.example.mobilecomputingproject.data.local.AppDatabase
+import dagger.hilt.android.HiltAndroidApp
 
-class MobileComputingProjectApplication : Application() {
-    lateinit var db: AppDatabase
-        private set
-
-    override fun onCreate() {
-        super.onCreate()
-        db = Room.databaseBuilder(
-                applicationContext,
-                AppDatabase::class.java, "posts_db"
-            ).fallbackToDestructiveMigration(false).build()
-    }
-}
+@HiltAndroidApp
+class MobileComputingProjectApplication : Application()

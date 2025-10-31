@@ -46,4 +46,7 @@ interface JsonPlaceholderApi {
 
     @GET("users/{id}")
     suspend fun getUserById(@Path("id") id: Int): User
+
+    @GET("users/{id}/posts")
+    suspend fun getPostsByUser(@Path("id") id: Int): List<Post>
 }

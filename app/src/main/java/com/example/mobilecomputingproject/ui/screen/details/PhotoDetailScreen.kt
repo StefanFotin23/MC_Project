@@ -24,9 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.mobilecomputingproject.MobileComputingProjectApplication
-import com.example.mobilecomputingproject.ui.ViewModelFactory
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.mobilecomputingproject.ui.viewmodel.details.PhotoDetailViewModel
 
@@ -34,14 +32,9 @@ import com.example.mobilecomputingproject.ui.viewmodel.details.PhotoDetailViewMo
 @Composable
 fun PhotoDetailScreen(
     photoId: Int,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    viewModel: PhotoDetailViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-    val application = context.applicationContext as MobileComputingProjectApplication
-    val db = application.db
-
-    val factory = ViewModelFactory(db)
-    val viewModel: PhotoDetailViewModel = viewModel(factory = factory, key = photoId.toString())
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(

@@ -16,6 +16,9 @@ interface PostDao {
     @Query("SELECT * FROM posts WHERE id = :id")
     fun getPostById(id: Int): Flow<PostEntity?>
 
+    @Query("SELECT * FROM posts WHERE userId = :userId")
+    fun getPostsByUser(userId: Int): Flow<List<PostEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(post: PostEntity)
 

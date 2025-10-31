@@ -23,23 +23,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.mobilecomputingproject.MobileComputingProjectApplication
-import com.example.mobilecomputingproject.ui.ViewModelFactory
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobilecomputingproject.ui.viewmodel.details.AlbumDetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlbumDetailScreen(
     albumId: Int,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    viewModel: AlbumDetailViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-    val application = context.applicationContext as MobileComputingProjectApplication
-    val db = application.db
-
-    val factory = ViewModelFactory(db)
-    val viewModel: AlbumDetailViewModel = viewModel(factory = factory, key = albumId.toString())
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(

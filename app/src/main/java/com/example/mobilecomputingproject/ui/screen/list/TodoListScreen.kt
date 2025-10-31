@@ -30,21 +30,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.mobilecomputingproject.MobileComputingProjectApplication
-import com.example.mobilecomputingproject.ui.ViewModelFactory
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobilecomputingproject.ui.viewmodel.list.TodoListViewModel
 
 @Composable
 fun TodoListScreen(
-    onTodoClick: (Int) -> Unit
+    onTodoClick: (Int) -> Unit,
+    viewModel: TodoListViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-    val application = context.applicationContext as MobileComputingProjectApplication
-    val db = application.db
-
-    val factory = ViewModelFactory(db)
-    val viewModel: TodoListViewModel = viewModel(factory = factory)
 
     val uiState by viewModel.uiState.collectAsState()
 

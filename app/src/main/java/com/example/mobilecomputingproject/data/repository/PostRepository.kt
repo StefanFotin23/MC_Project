@@ -45,6 +45,13 @@ class PostRepository(
     fun getPostById(id: Int): Flow<Post?> = postDao.getPostById(id).map { it?.toDomain() }
 
     /**
+     * Returns a flow of posts from the local cache for a specific user.
+     */
+    fun getPostsByUser(userId: Int): Flow<List<Post>> = postDao.getPostsByUser(userId).map { entities ->
+        entities.map { it.toDomain() }
+    }
+
+    /**
      * Fetches a single post from the API and saves it to the local cache.
      */
     suspend fun refreshPost(id: Int) {
@@ -54,6 +61,21 @@ class PostRepository(
                 postDao.insertAll(listOf(apiPost.toEntity()))
             } catch (e: Exception) {
                 Log.e("Repository", "Error fetching post $id: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Fetches posts for a specific user from the API and saves them to the local cache.
+     */
+    suspend fun refreshPostsByUser(userId: Int) {
+        withContext(Dispatchers.IO) {
+            try {
+                val apiPosts = RetrofitInstance.api.getPostsByUser(userId)
+                Log.d("Repository", "Fetched ${apiPosts.size} posts from API for user $userId")
+                postDao.insertAll(apiPosts.map { it.toEntity() })
+            } catch (e: Exception) {
+                Log.e("Repository", "Error fetching posts for user $userId: ${e.message}")
             }
         }
     }
