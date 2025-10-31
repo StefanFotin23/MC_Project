@@ -1,4 +1,4 @@
-package com.example.mobilecomputingproject.di
+package com.example.mobilecomputingproject.dependency_injection
 
 import android.content.Context
 import androidx.room.Room

@@ -25,6 +25,9 @@ interface CommentDao {
     @Query("DELETE FROM comments")
     suspend fun clearAll()
 
+    @Query("SELECT COUNT(*) FROM comments WHERE postId = :postId")
+    fun getCommentCountForPost(postId: Int): Flow<Int>
+
     suspend fun clearAndInsert(comments: List<CommentEntity>) {
         clearAll()
         insertAll(comments)

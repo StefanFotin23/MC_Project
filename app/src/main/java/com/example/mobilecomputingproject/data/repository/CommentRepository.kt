@@ -47,6 +47,11 @@ class CommentRepository(
     /**
      * Fetches a single comment from the API and saves it to the local cache.
      */
+    fun getCommentCountForPost(postId: Int): Flow<Int> = commentDao.getCommentCountForPost(postId)
+
+    /**
+     * Fetches a single comment from the API and saves it to the local cache.
+     */
     suspend fun refreshComment(id: Int) {
         withContext(Dispatchers.IO) {
             try {

@@ -3,7 +3,6 @@ package com.example.mobilecomputingproject.ui.screen.list
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +16,12 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Photo
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.WineBar
 import androidx.compose.material3.BottomAppBar
+import androidx.navigation.NavController
+import com.example.mobilecomputingproject.ui.navigation.Routes
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -54,7 +58,8 @@ import com.example.mobilecomputingproject.ui.viewmodel.list.PostListViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostListScreen(
-    viewModel: PostListViewModel = hiltViewModel()
+    viewModel: PostListViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var authorSearchExpanded by remember { mutableStateOf(false) }
@@ -81,6 +86,12 @@ fun PostListScreen(
                         Text("Posts")
                     }
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        IconButton(onClick = { navController.navigate(Routes.PHOTO_LIST) }) {
+                            Icon(Icons.Default.Photo, contentDescription = "Photos")
+                        }
+                        Text("Photos")
+                    }
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         IconButton(onClick = { /*TODO: Navigate to Favorites screen*/ }) {
                             Icon(Icons.Default.Favorite, contentDescription = "Favorites")
                         }
@@ -90,7 +101,9 @@ fun PostListScreen(
             }
         }
     ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues)) {
+        Column(modifier = Modifier
+            .padding(paddingValues)
+            .background(Color.White)) {
             FilterSection(
                 viewModel = viewModel,
                 authorSearchExpanded = authorSearchExpanded,
@@ -127,6 +140,10 @@ fun FilterSection(
     ) {
         Text("\tFilters", fontWeight = FontWeight.Bold, color = Color.Black)
         Row(horizontalArrangement = Arrangement.End) {
+            val starTint = if (uiState.isTopRatedFilterActive) MaterialTheme.colorScheme.primary else Color.Black
+            IconButton(onClick = { viewModel.toggleTopRatedFilter() }) {
+                Icon(Icons.Default.WineBar, contentDescription = "Filter by Top Rated", tint = starTint)
+            }
             IconButton(onClick = { onAuthorSearchExpandedChange(!authorSearchExpanded) }) {
                 Icon(Icons.Default.Person, contentDescription = "Filter by Author", tint = Color.Black)
             }

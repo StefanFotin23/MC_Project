@@ -1,4 +1,4 @@
-package com.example.mobilecomputingproject.di
+package com.example.mobilecomputingproject.dependency_injection
 
 import com.example.mobilecomputingproject.data.local.AppDatabase
 import com.example.mobilecomputingproject.data.repository.AlbumRepository
