@@ -1,6 +1,7 @@
 package com.example.mobilecomputingproject.ui.navigation
 
 object Routes {
+    const val HOME = "home"
     const val POST_LIST = "post_list"
     const val POST_DETAIL = "post_detail/{postId}"
     const val COMMENT_LIST = "comment_list"

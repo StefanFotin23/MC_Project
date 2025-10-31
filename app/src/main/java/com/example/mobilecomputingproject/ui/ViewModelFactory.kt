@@ -5,18 +5,18 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.mobilecomputingproject.data.local.AppDatabase
-import com.example.mobilecomputingproject.ui.details.AlbumDetailViewModel
-import com.example.mobilecomputingproject.ui.details.CommentDetailViewModel
-import com.example.mobilecomputingproject.ui.details.PhotoDetailViewModel
-import com.example.mobilecomputingproject.ui.details.PostDetailViewModel
-import com.example.mobilecomputingproject.ui.details.TodoDetailViewModel
-import com.example.mobilecomputingproject.ui.details.UserDetailViewModel
-import com.example.mobilecomputingproject.ui.list.AlbumListViewModel
-import com.example.mobilecomputingproject.ui.list.CommentListViewModel
-import com.example.mobilecomputingproject.ui.list.PhotoListViewModel
-import com.example.mobilecomputingproject.ui.list.PostListViewModel
-import com.example.mobilecomputingproject.ui.list.TodoListViewModel
-import com.example.mobilecomputingproject.ui.list.UserListViewModel
+import com.example.mobilecomputingproject.ui.viewmodel.details.AlbumDetailViewModel
+import com.example.mobilecomputingproject.ui.viewmodel.details.CommentDetailViewModel
+import com.example.mobilecomputingproject.ui.viewmodel.details.PhotoDetailViewModel
+import com.example.mobilecomputingproject.ui.viewmodel.details.PostDetailViewModel
+import com.example.mobilecomputingproject.ui.viewmodel.details.TodoDetailViewModel
+import com.example.mobilecomputingproject.ui.viewmodel.details.UserDetailViewModel
+import com.example.mobilecomputingproject.ui.viewmodel.list.AlbumListViewModel
+import com.example.mobilecomputingproject.ui.viewmodel.list.CommentListViewModel
+import com.example.mobilecomputingproject.ui.viewmodel.list.PhotoListViewModel
+import com.example.mobilecomputingproject.ui.viewmodel.list.PostListViewModel
+import com.example.mobilecomputingproject.ui.viewmodel.list.TodoListViewModel
+import com.example.mobilecomputingproject.ui.viewmodel.list.UserListViewModel
 
 class ViewModelFactory(private val db: AppDatabase) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {

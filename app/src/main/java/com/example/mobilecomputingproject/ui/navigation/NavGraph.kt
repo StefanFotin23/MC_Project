@@ -4,25 +4,33 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.mobilecomputingproject.ui.details.AlbumDetailScreen
-import com.example.mobilecomputingproject.ui.details.CommentDetailScreen
-import com.example.mobilecomputingproject.ui.details.PhotoDetailScreen
-import com.example.mobilecomputingproject.ui.details.PostDetailScreen
-import com.example.mobilecomputingproject.ui.details.TodoDetailScreen
-import com.example.mobilecomputingproject.ui.details.UserDetailScreen
-import com.example.mobilecomputingproject.ui.list.AlbumListScreen
-import com.example.mobilecomputingproject.ui.list.CommentListScreen
-import com.example.mobilecomputingproject.ui.list.PhotoListScreen
-import com.example.mobilecomputingproject.ui.list.PostListScreen
-import com.example.mobilecomputingproject.ui.list.TodoListScreen
-import com.example.mobilecomputingproject.ui.list.UserListScreen
+import com.example.mobilecomputingproject.ui.screen.HomeScreen
+import com.example.mobilecomputingproject.ui.screen.details.AlbumDetailScreen
+import com.example.mobilecomputingproject.ui.screen.details.CommentDetailScreen
+import com.example.mobilecomputingproject.ui.screen.details.PhotoDetailScreen
+import com.example.mobilecomputingproject.ui.screen.details.PostDetailScreen
+import com.example.mobilecomputingproject.ui.screen.details.TodoDetailScreen
+import com.example.mobilecomputingproject.ui.screen.details.UserDetailScreen
+import com.example.mobilecomputingproject.ui.screen.list.AlbumListScreen
+import com.example.mobilecomputingproject.ui.screen.list.CommentListScreen
+import com.example.mobilecomputingproject.ui.screen.list.PhotoListScreen
+import com.example.mobilecomputingproject.ui.screen.list.PostListScreen
+import com.example.mobilecomputingproject.ui.screen.list.TodoListScreen
+import com.example.mobilecomputingproject.ui.screen.list.UserListScreen
 
 @Composable
 fun NavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = Routes.POST_LIST
+        startDestination = Routes.HOME
     ) {
+        composable(Routes.HOME) {
+            HomeScreen(
+                onNavigate = { route ->
+                    navController.navigate(route)
+                }
+            )
+        }
         composable(Routes.POST_LIST) {
             PostListScreen(
                 onPostClick = { postId ->

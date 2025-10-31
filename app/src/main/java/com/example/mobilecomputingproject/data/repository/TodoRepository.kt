@@ -2,9 +2,9 @@ package com.example.mobilecomputingproject.data.repository
 
 import android.util.Log
 import com.example.mobilecomputingproject.data.local.AppDatabase
-import com.example.mobilecomputingproject.data.local.toDomain
-import com.example.mobilecomputingproject.data.local.toEntity
-import com.example.mobilecomputingproject.data.remote.RetrofitInstance
+import com.example.mobilecomputingproject.data.local.entity.toDomain
+import com.example.mobilecomputingproject.data.local.entity.toEntity
+import com.example.mobilecomputingproject.data.api.RetrofitInstance
 import com.example.mobilecomputingproject.domain.model.Todo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -25,14 +25,14 @@ class TodoRepository(
     }
 
     /**
-     * Fetches todos from the remote API and saves them to the local cache.
+     * Fetches todos from the API and saves them to the local cache.
      */
     suspend fun refreshTodos() {
         withContext(Dispatchers.IO) {
             try {
-                val remoteTodos = RetrofitInstance.api.getTodos()
-                Log.d("Repository", "Fetched ${remoteTodos.size} todos from API")
-                todoDao.insertAll(remoteTodos.map { it.toEntity() })
+                val apiTodos = RetrofitInstance.api.getTodos()
+                Log.d("Repository", "Fetched ${apiTodos.size} todos from API")
+                todoDao.insertAll(apiTodos.map { it.toEntity() })
             } catch (e: Exception) {
                 Log.e("Repository", "Error fetching todos: ${e.message}")
             }
@@ -45,13 +45,13 @@ class TodoRepository(
     fun getTodoById(id: Int): Flow<Todo?> = todoDao.getTodoById(id).map { it?.toDomain() }
 
     /**
-     * Fetches a single todo from the remote API and saves it to the local cache.
+     * Fetches a single todo from the API and saves it to the local cache.
      */
     suspend fun refreshTodo(id: Int) {
         withContext(Dispatchers.IO) {
             try {
-                val remoteTodo = RetrofitInstance.api.getTodoById(id)
-                todoDao.insertAll(listOf(remoteTodo.toEntity()))
+                val apiTodo = RetrofitInstance.api.getTodoById(id)
+                todoDao.insertAll(listOf(apiTodo.toEntity()))
             } catch (e: Exception) {
                 Log.e("Repository", "Error fetching todo $id: ${e.message}")
             }

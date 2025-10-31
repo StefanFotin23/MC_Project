@@ -2,9 +2,9 @@ package com.example.mobilecomputingproject.data.repository
 
 import android.util.Log
 import com.example.mobilecomputingproject.data.local.AppDatabase
-import com.example.mobilecomputingproject.data.local.toDomain
-import com.example.mobilecomputingproject.data.local.toEntity
-import com.example.mobilecomputingproject.data.remote.RetrofitInstance
+import com.example.mobilecomputingproject.data.local.entity.toDomain
+import com.example.mobilecomputingproject.data.local.entity.toEntity
+import com.example.mobilecomputingproject.data.api.RetrofitInstance
 import com.example.mobilecomputingproject.domain.model.Photo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -25,14 +25,14 @@ class PhotoRepository(
     }
 
     /**
-     * Fetches photos from the remote API and saves them to the local cache.
+     * Fetches photos from the API and saves them to the local cache.
      */
     suspend fun refreshPhotos() {
         withContext(Dispatchers.IO) {
             try {
-                val remotePhotos = RetrofitInstance.api.getPhotos()
-                Log.d("Repository", "Fetched ${remotePhotos.size} photos from API")
-                photoDao.insertAll(remotePhotos.map { it.toEntity() })
+                val apiPhotos = RetrofitInstance.api.getPhotos()
+                Log.d("Repository", "Fetched ${apiPhotos.size} photos from API")
+                photoDao.insertAll(apiPhotos.map { it.toEntity() })
             } catch (e: Exception) {
                 Log.e("Repository", "Error fetching photos: ${e.message}")
             }
@@ -45,13 +45,13 @@ class PhotoRepository(
     fun getPhotoById(id: Int): Flow<Photo?> = photoDao.getPhotoById(id).map { it?.toDomain() }
 
     /**
-     * Fetches a single photo from the remote API and saves it to the local cache.
+     * Fetches a single photo from the API and saves it to the local cache.
      */
     suspend fun refreshPhoto(id: Int) {
         withContext(Dispatchers.IO) {
             try {
-                val remotePhoto = RetrofitInstance.api.getPhotoById(id)
-                photoDao.insertAll(listOf(remotePhoto.toEntity()))
+                val apiPhoto = RetrofitInstance.api.getPhotoById(id)
+                photoDao.insertAll(listOf(apiPhoto.toEntity()))
             } catch (e: Exception) {
                 Log.e("Repository", "Error fetching photo $id: ${e.message}")
             }

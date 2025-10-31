@@ -2,6 +2,18 @@ package com.example.mobilecomputingproject.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.example.mobilecomputingproject.data.local.dao.AlbumDao
+import com.example.mobilecomputingproject.data.local.dao.CommentDao
+import com.example.mobilecomputingproject.data.local.dao.PhotoDao
+import com.example.mobilecomputingproject.data.local.dao.PostDao
+import com.example.mobilecomputingproject.data.local.dao.TodoDao
+import com.example.mobilecomputingproject.data.local.dao.UserDao
+import com.example.mobilecomputingproject.data.local.entity.AlbumEntity
+import com.example.mobilecomputingproject.data.local.entity.CommentEntity
+import com.example.mobilecomputingproject.data.local.entity.PhotoEntity
+import com.example.mobilecomputingproject.data.local.entity.PostEntity
+import com.example.mobilecomputingproject.data.local.entity.TodoEntity
+import com.example.mobilecomputingproject.data.local.entity.UserEntity
 
 @Database(
     entities = [

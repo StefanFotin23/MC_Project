@@ -2,9 +2,9 @@ package com.example.mobilecomputingproject.data.repository
 
 import android.util.Log
 import com.example.mobilecomputingproject.data.local.AppDatabase
-import com.example.mobilecomputingproject.data.local.toDomain
-import com.example.mobilecomputingproject.data.local.toEntity
-import com.example.mobilecomputingproject.data.remote.RetrofitInstance
+import com.example.mobilecomputingproject.data.local.entity.toDomain
+import com.example.mobilecomputingproject.data.local.entity.toEntity
+import com.example.mobilecomputingproject.data.api.RetrofitInstance
 import com.example.mobilecomputingproject.domain.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -25,14 +25,14 @@ class UserRepository(
     }
 
     /**
-     * Fetches users from the remote API and saves them to the local cache.
+     * Fetches users from the API and saves them to the local cache.
      */
     suspend fun refreshUsers() {
         withContext(Dispatchers.IO) {
             try {
-                val remoteUsers = RetrofitInstance.api.getUsers()
-                Log.d("Repository", "Fetched ${remoteUsers.size} users from API")
-                userDao.insertAll(remoteUsers.map { it.toEntity() })
+                val apiUsers = RetrofitInstance.api.getUsers()
+                Log.d("Repository", "Fetched ${apiUsers.size} users from API")
+                userDao.insertAll(apiUsers.map { it.toEntity() })
             } catch (e: Exception) {
                 Log.e("Repository", "Error fetching users: ${e.message}")
             }
@@ -45,13 +45,13 @@ class UserRepository(
     fun getUserById(id: Int): Flow<User?> = userDao.getUserById(id).map { it?.toDomain() }
 
     /**
-     * Fetches a single user from the remote API and saves it to the local cache.
+     * Fetches a single user from the API and saves it to the local cache.
      */
     suspend fun refreshUser(id: Int) {
         withContext(Dispatchers.IO) {
             try {
-                val remoteUser = RetrofitInstance.api.getUserById(id)
-                userDao.insertAll(listOf(remoteUser.toEntity()))
+                val apiUser = RetrofitInstance.api.getUserById(id)
+                userDao.insertAll(listOf(apiUser.toEntity()))
             } catch (e: Exception) {
                 Log.e("Repository", "Error fetching user $id: ${e.message}")
             }

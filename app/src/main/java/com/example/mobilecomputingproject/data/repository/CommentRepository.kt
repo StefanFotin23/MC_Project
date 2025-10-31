@@ -2,9 +2,9 @@ package com.example.mobilecomputingproject.data.repository
 
 import android.util.Log
 import com.example.mobilecomputingproject.data.local.AppDatabase
-import com.example.mobilecomputingproject.data.local.toDomain
-import com.example.mobilecomputingproject.data.local.toEntity
-import com.example.mobilecomputingproject.data.remote.RetrofitInstance
+import com.example.mobilecomputingproject.data.local.entity.toDomain
+import com.example.mobilecomputingproject.data.local.entity.toEntity
+import com.example.mobilecomputingproject.data.api.RetrofitInstance
 import com.example.mobilecomputingproject.domain.model.Comment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -25,14 +25,14 @@ class CommentRepository(
     }
 
     /**
-     * Fetches comments from the remote API and saves them to the local cache.
+     * Fetches comments from the API and saves them to the local cache.
      */
     suspend fun refreshComments() {
         withContext(Dispatchers.IO) {
             try {
-                val remoteComments = RetrofitInstance.api.getComments()
-                Log.d("Repository", "Fetched ${remoteComments.size} comments from API")
-                commentDao.insertAll(remoteComments.map { it.toEntity() })
+                val apiComments = RetrofitInstance.api.getComments()
+                Log.d("Repository", "Fetched ${apiComments.size} comments from API")
+                commentDao.insertAll(apiComments.map { it.toEntity() })
             } catch (e: Exception) {
                 Log.e("Repository", "Error fetching comments: ${e.message}")
             }
@@ -45,13 +45,13 @@ class CommentRepository(
     fun getCommentById(id: Int): Flow<Comment?> = commentDao.getCommentById(id).map { it?.toDomain() }
 
     /**
-     * Fetches a single comment from the remote API and saves it to the local cache.
+     * Fetches a single comment from the API and saves it to the local cache.
      */
     suspend fun refreshComment(id: Int) {
         withContext(Dispatchers.IO) {
             try {
-                val remoteComment = RetrofitInstance.api.getCommentById(id)
-                commentDao.insertAll(listOf(remoteComment.toEntity()))
+                val apiComment = RetrofitInstance.api.getCommentById(id)
+                commentDao.insertAll(listOf(apiComment.toEntity()))
             } catch (e: Exception) {
                 Log.e("Repository", "Error fetching comment $id: ${e.message}")
             }

@@ -2,9 +2,9 @@ package com.example.mobilecomputingproject.data.repository
 
 import android.util.Log
 import com.example.mobilecomputingproject.data.local.AppDatabase
-import com.example.mobilecomputingproject.data.local.toDomain
-import com.example.mobilecomputingproject.data.local.toEntity
-import com.example.mobilecomputingproject.data.remote.RetrofitInstance
+import com.example.mobilecomputingproject.data.local.entity.toDomain
+import com.example.mobilecomputingproject.data.local.entity.toEntity
+import com.example.mobilecomputingproject.data.api.RetrofitInstance
 import com.example.mobilecomputingproject.domain.model.Post
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -25,14 +25,14 @@ class PostRepository(
     }
 
     /**
-     * Fetches posts from the remote API and saves them to the local cache.
+     * Fetches posts from the API and saves them to the local cache.
      */
     suspend fun refreshPosts() {
         withContext(Dispatchers.IO) {
             try {
-                val remotePosts = RetrofitInstance.api.getPosts()
-                Log.d("Repository", "Fetched ${remotePosts.size} posts from API")
-                postDao.insertAll(remotePosts.map { it.toEntity() })
+                val apiPosts = RetrofitInstance.api.getPosts()
+                Log.d("Repository", "Fetched ${apiPosts.size} posts from API")
+                postDao.insertAll(apiPosts.map { it.toEntity() })
             } catch (e: Exception) {
                 Log.e("Repository", "Error fetching posts: ${e.message}")
             }
@@ -45,13 +45,13 @@ class PostRepository(
     fun getPostById(id: Int): Flow<Post?> = postDao.getPostById(id).map { it?.toDomain() }
 
     /**
-     * Fetches a single post from the remote API and saves it to the local cache.
+     * Fetches a single post from the API and saves it to the local cache.
      */
     suspend fun refreshPost(id: Int) {
         withContext(Dispatchers.IO) {
             try {
-                val remotePost = RetrofitInstance.api.getPostById(id)
-                postDao.insertAll(listOf(remotePost.toEntity()))
+                val apiPost = RetrofitInstance.api.getPostById(id)
+                postDao.insertAll(listOf(apiPost.toEntity()))
             } catch (e: Exception) {
                 Log.e("Repository", "Error fetching post $id: ${e.message}")
             }
