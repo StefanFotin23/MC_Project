@@ -57,4 +57,10 @@ class PhotoRepository(
             }
         }
     }
+
+    suspend fun updateFavoriteStatus(photoId: Int, isFavorite: Boolean) {
+        withContext(Dispatchers.IO) {
+            photoDao.updateFavoriteStatus(photoId, isFavorite)
+        }
+    }
 }

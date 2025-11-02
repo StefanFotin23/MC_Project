@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -68,9 +67,7 @@ import com.example.mobilecomputingproject.domain.model.Post
 import com.example.mobilecomputingproject.domain.model.User
 import com.example.mobilecomputingproject.ui.navigation.Routes
 import com.example.mobilecomputingproject.ui.theme.LightningBlue
-import com.example.mobilecomputingproject.ui.theme.LightningRed
 import com.example.mobilecomputingproject.ui.theme.LightningTurquoise
-import com.example.mobilecomputingproject.ui.theme.LightningYellow
 import com.example.mobilecomputingproject.ui.viewmodel.list.PostListViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

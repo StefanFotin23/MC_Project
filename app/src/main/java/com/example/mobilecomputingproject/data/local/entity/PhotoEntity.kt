@@ -10,8 +10,9 @@ data class PhotoEntity(
     val albumId: Int,
     val title: String,
     val url: String,
-    val thumbnailUrl: String
+    val thumbnailUrl: String,
+    val isFavorite: Boolean = false
 )
 
-fun PhotoEntity.toDomain(): Photo = Photo(albumId, id, title, url, thumbnailUrl)
-fun Photo.toEntity(): PhotoEntity = PhotoEntity(id, albumId, title, url, thumbnailUrl)
+fun PhotoEntity.toDomain(): Photo = Photo(albumId, id, title, url, thumbnailUrl, isFavorite)
+fun Photo.toEntity(): PhotoEntity = PhotoEntity(id, albumId, title, url, thumbnailUrl, isFavorite)

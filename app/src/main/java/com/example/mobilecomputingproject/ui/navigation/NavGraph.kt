@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.mobilecomputingproject.ui.screen.HomeScreen
 import com.example.mobilecomputingproject.ui.screen.details.AlbumDetailScreen
 import com.example.mobilecomputingproject.ui.screen.details.CommentDetailScreen
 import com.example.mobilecomputingproject.ui.screen.details.PhotoDetailScreen
@@ -15,7 +14,6 @@ import com.example.mobilecomputingproject.ui.screen.list.AlbumListScreen
 import com.example.mobilecomputingproject.ui.screen.list.CommentListScreen
 import com.example.mobilecomputingproject.ui.screen.list.PhotoListScreen
 import com.example.mobilecomputingproject.ui.screen.list.PostListScreen
-//import com.example.mobilecomputingproject.ui.screen.list.PostListScreen
 import com.example.mobilecomputingproject.ui.screen.list.TodoListScreen
 import com.example.mobilecomputingproject.ui.screen.list.UserListScreen
 

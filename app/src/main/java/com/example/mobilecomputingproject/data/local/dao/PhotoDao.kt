@@ -25,6 +25,9 @@ interface PhotoDao {
     @Query("DELETE FROM photos")
     suspend fun clearAll()
 
+    @Query("UPDATE photos SET isFavorite = :isFavorite WHERE id = :photoId")
+    suspend fun updateFavoriteStatus(photoId: Int, isFavorite: Boolean)
+
     suspend fun clearAndInsert(photos: List<PhotoEntity>) {
         clearAll()
         insertAll(photos)
