@@ -24,7 +24,7 @@ import com.example.mobilecomputingproject.data.local.entity.UserEntity
         TodoEntity::class,
         UserEntity::class
     ],
-    version = 3
+    version = 4
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun postDao(): PostDao

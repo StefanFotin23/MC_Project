@@ -289,7 +289,7 @@ fun PostDetailPopup(postId: Int, viewModel: PostListViewModel, onClose: () -> Un
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(Brush.verticalGradient(listOf(LightningBlue, LightningTurquoise)))
                         .padding(16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
