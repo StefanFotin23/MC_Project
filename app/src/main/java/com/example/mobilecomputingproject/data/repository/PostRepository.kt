@@ -8,6 +8,7 @@ import com.example.mobilecomputingproject.data.api.RetrofitInstance
 import com.example.mobilecomputingproject.domain.model.Post
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
@@ -32,7 +33,15 @@ class PostRepository(
             try {
                 val apiPosts = RetrofitInstance.api.getPosts()
                 Log.d("Repository", "Fetched ${apiPosts.size} posts from API")
-                postDao.insertAll(apiPosts.map { it.toEntity() })
+
+                // Get current favorite statuses from local DB
+                val existingPosts = postDao.getAllPosts().first()
+                val favoriteStatuses = existingPosts.associate { it.id to it.isFavorite }
+
+                val postsToInsert = apiPosts.map { apiPost ->
+                    apiPost.toEntity().copy(isFavorite = favoriteStatuses[apiPost.id] ?: false)
+                }
+                postDao.insertAll(postsToInsert)
             } catch (e: Exception) {
                 Log.e("Repository", "Error fetching posts: ${e.message}")
             }
@@ -82,7 +91,15 @@ class PostRepository(
             try {
                 val apiPosts = RetrofitInstance.api.getPostsByUser(userId)
                 Log.d("Repository", "Fetched ${apiPosts.size} posts from API for user $userId")
-                postDao.insertAll(apiPosts.map { it.toEntity() })
+
+                // Get current favorite statuses from local DB
+                val existingPosts = postDao.getAllPosts().first()
+                val favoriteStatuses = existingPosts.associate { it.id to it.isFavorite }
+
+                val postsToInsert = apiPosts.map { apiPost ->
+                    apiPost.toEntity().copy(isFavorite = favoriteStatuses[apiPost.id] ?: false)
+                }
+                postDao.insertAll(postsToInsert)
             } catch (e: Exception) {
                 Log.e("Repository", "Error fetching posts for user $userId: ${e.message}")
             }
