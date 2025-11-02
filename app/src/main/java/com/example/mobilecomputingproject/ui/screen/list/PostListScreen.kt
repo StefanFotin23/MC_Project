@@ -173,7 +173,21 @@ fun FilterSection(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text("	Filters", fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 20.sp)
+        Text("\tFilters", fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 20.sp)
+        uiState.selectedUser?.let { user ->
+            Text(
+                text = user.name,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 8.dp),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    brush = Brush.linearGradient(listOf(LightningBlue, LightningTurquoise))
+                )
+            )
+        }
         Row(horizontalArrangement = Arrangement.End) {
             val starTint =
                 if (uiState.isTopRatedFilterActive) MaterialTheme.colorScheme.primary else Color.Black
