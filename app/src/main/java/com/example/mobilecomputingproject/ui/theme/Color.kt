@@ -12,3 +12,5 @@ val Pink40 = Color(0xFF7D5260)
 
 val LightningRed = Color(0xFFFF0000)
 val LightningYellow = Color(0xFFFFFF00)
+val LightningBlue = Color(0xFF0E48B9)
+val LightningTurquoise = Color(0xFF229F9C)

@@ -1,5 +1,6 @@
 package com.example.mobilecomputingproject.ui.viewmodel.list
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mobilecomputingproject.data.repository.CommentRepository
@@ -8,6 +9,8 @@ import com.example.mobilecomputingproject.data.repository.UserRepository
 import com.example.mobilecomputingproject.domain.model.Post
 import com.example.mobilecomputingproject.domain.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
+import android.widget.Toast
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -34,7 +37,8 @@ data class PostListUiState(
 class PostListViewModel @Inject constructor(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository,
-    private val commentRepository: CommentRepository
+    private val commentRepository: CommentRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PostListUiState())
@@ -88,6 +92,11 @@ class PostListViewModel @Inject constructor(
 
     fun toggleTopRatedFilter() {
         _uiState.update { it.copy(isTopRatedFilterActive = !it.isTopRatedFilterActive) }
+        if (_uiState.value.isTopRatedFilterActive) {
+            Toast.makeText(context, "Showing Top Posts", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context, "Showing Latest Posts", Toast.LENGTH_SHORT).show()
+        }
     }
 
     fun toggleShowFavoritesOnly() {
@@ -149,6 +158,14 @@ class PostListViewModel @Inject constructor(
     fun toggleFavoriteStatus(postId: Int, isFavorite: Boolean) {
         viewModelScope.launch {
             postRepository.updateFavoriteStatus(postId, isFavorite)
+        }
+    }
+
+    fun refreshPosts() {
+        viewModelScope.launch {
+            postRepository.refreshPosts()
+            userRepository.refreshUsers()
+            commentRepository.refreshComments()
         }
     }
 }

@@ -57,6 +57,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.platform.LocalContext
+import android.widget.Toast
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -65,7 +67,9 @@ import com.example.mobilecomputingproject.R
 import com.example.mobilecomputingproject.domain.model.Post
 import com.example.mobilecomputingproject.domain.model.User
 import com.example.mobilecomputingproject.ui.navigation.Routes
+import com.example.mobilecomputingproject.ui.theme.LightningBlue
 import com.example.mobilecomputingproject.ui.theme.LightningRed
+import com.example.mobilecomputingproject.ui.theme.LightningTurquoise
 import com.example.mobilecomputingproject.ui.theme.LightningYellow
 import com.example.mobilecomputingproject.ui.viewmodel.list.PostListViewModel
 
@@ -78,9 +82,17 @@ fun PostListScreen(
     val uiState by viewModel.uiState.collectAsState()
     var authorSearchExpanded by remember { mutableStateOf(false) }
     var selectedPost by remember { mutableStateOf<Post?>(null) }
+    val context = LocalContext.current
 
     Scaffold(
         containerColor = Color.Transparent,
+        topBar = {
+            androidx.compose.material3.TopAppBar(
+                title = { Text(text = stringResource(id = R.string.app_name)) },
+                modifier = Modifier.background(Color.White),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
+            )
+        },
         bottomBar = {
             BottomAppBar(containerColor = Color.White) {
                 Row(
@@ -89,7 +101,10 @@ fun PostListScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        IconButton(onClick = { /* Already on Posts screen */ }) {
+                        IconButton(onClick = {
+                            viewModel.refreshPosts()
+                            Toast.makeText(context, "Refreshing posts...", Toast.LENGTH_SHORT).show()
+                        }) {
                             Icon(Icons.Default.Home, contentDescription = "Posts")
                         }
                         Text("Posts")
@@ -137,7 +152,7 @@ fun PostListScreen(
     }
 
     selectedPost?.let { post ->
-        PostDetailPopup(post = post, viewModel = viewModel) {
+        PostDetailPopup(postId = post.id, viewModel = viewModel) {
             selectedPost = null
         }
     }
@@ -225,7 +240,7 @@ fun PostItem(post: Post, author: User?, onClick: (Post) -> Unit) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.primary)
+                    .background(Brush.verticalGradient(listOf(LightningBlue, LightningTurquoise)))
                     .padding(16.dp)
             ) {
                 Text(
@@ -257,7 +272,10 @@ fun PostItem(post: Post, author: User?, onClick: (Post) -> Unit) {
 }
 
 @Composable
-fun PostDetailPopup(post: Post, viewModel: PostListViewModel, onClose: () -> Unit) {
+fun PostDetailPopup(postId: Int, viewModel: PostListViewModel, onClose: () -> Unit) {
+    val uiState by viewModel.uiState.collectAsState()
+    val post = uiState.posts.find { it.id == postId } ?: return // Return if post not found
+
     Dialog(
         onDismissRequest = onClose,
         properties = DialogProperties(usePlatformDefaultWidth = false)
