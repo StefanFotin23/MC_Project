@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Photo
+import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.WineBar
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
@@ -111,6 +112,12 @@ fun PostListScreen(
                             Icon(Icons.Default.Photo, contentDescription = "Photos")
                         }
                         Text("Photos")
+                    }
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        IconButton(onClick = { navController.navigate(Routes.EXPLORE) }) {
+                            Icon(Icons.Default.Explore, contentDescription = "Explore")
+                        }
+                        Text("Explore")
                     }
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         val favoriteIcon = if (uiState.showFavoritesOnly) Icons.Default.Favorite else Icons.Default.FavoriteBorder

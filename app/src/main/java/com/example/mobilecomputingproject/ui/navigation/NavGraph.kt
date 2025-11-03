@@ -16,6 +16,7 @@ import com.example.mobilecomputingproject.ui.screen.list.PhotoListScreen
 import com.example.mobilecomputingproject.ui.screen.list.PostListScreen
 import com.example.mobilecomputingproject.ui.screen.list.TodoListScreen
 import com.example.mobilecomputingproject.ui.screen.list.UserListScreen
+import com.example.mobilecomputingproject.ui.screen.ExploreScreen
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -25,6 +26,10 @@ fun NavGraph(navController: NavHostController) {
     ) {
         composable(Routes.POST_LIST) {
             PostListScreen(navController = navController)
+        }
+
+        composable(Routes.EXPLORE) {
+            ExploreScreen(navController = navController)
         }
 
         composable(Routes.POST_DETAIL) { backStackEntry ->

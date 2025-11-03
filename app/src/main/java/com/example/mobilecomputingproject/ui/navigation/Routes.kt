@@ -14,4 +14,5 @@ object Routes {
     const val TODO_DETAIL = "todo_detail/{todoId}"
     const val USER_LIST = "user_list"
     const val USER_DETAIL = "user_detail/{userId}"
+    const val EXPLORE = "explore"
 }
