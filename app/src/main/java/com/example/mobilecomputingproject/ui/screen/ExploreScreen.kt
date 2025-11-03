@@ -61,7 +61,11 @@ import coil.compose.AsyncImage
 import com.example.mobilecomputingproject.ui.viewmodel.list.PostListViewModel
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Photo
+import androidx.compose.ui.text.style.TextOverflow
+import com.example.mobilecomputingproject.ui.theme.LightningBlue
+import androidx.compose.ui.text.style.TextAlign
 import com.example.mobilecomputingproject.ui.screen.list.PostDetailPopup
+import com.example.mobilecomputingproject.ui.theme.LightningTurquoise
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -158,9 +162,12 @@ fun ExploreScreen(
             } else {
                 when (uiState.selectedContentType) {
                     ContentType.POSTS -> {
-                        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            items(uiState.posts) { post ->
-                                ExplorePostItem(post = post) { selectedPost = post }
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                items(uiState.posts) { post ->
+                                    val author = uiState.users.find { it.id == post.userId }
+                                    ExplorePostItem(post = post, author = author) { selectedPost = post }
+                                }
                             }
                         }
                     }
@@ -186,24 +193,46 @@ fun ExploreScreen(
 }
 
 @Composable
-fun ExplorePostItem(post: Post, onClick: (Post) -> Unit) {
+fun ExplorePostItem(post: Post, author: User?, onClick: (Post) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 4.dp)
-            .clickable { onClick(post) }
+            .padding(vertical = 4.dp)
+            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
+            .clickable { onClick(post) },
+        shape = RoundedCornerShape(8.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = post.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                modifier = Modifier.padding(16.dp)
-            )
-            Text(
-                text = post.body.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Brush.verticalGradient(listOf(LightningBlue, LightningTurquoise)))
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = post.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+                author?.let {
+                    Text(
+                        text = "by ${it.name}",
+                        fontStyle = FontStyle.Italic,
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.End
+                    )
+                }
+            }
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = post.body.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }
