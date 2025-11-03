@@ -12,11 +12,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 import com.example.mobilecomputingproject.domain.model.Album
+
+data class PhotoFilters(
+    val showFavoritesOnly: Boolean = false,
+    val selectedUser: User? = null,
+    val selectedAlbum: Album? = null
+)
 
 data class PhotoListUiState(
     val photos: List<Photo> = emptyList(),
@@ -41,6 +47,8 @@ class PhotoListViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(PhotoListUiState())
     val uiState: StateFlow<PhotoListUiState> = _uiState.asStateFlow()
 
+    private val _filters = MutableStateFlow(PhotoFilters())
+
     init {
         viewModelScope.launch {
             userRepository.refreshUsers()
@@ -53,32 +61,38 @@ class PhotoListViewModel @Inject constructor(
                 photoRepository.getPhotos(),
                 userRepository.getUsers(),
                 albumRepository.getAlbums(),
-                _uiState
-            ) { photos, users, albums, uiState ->
-                val filteredPhotos = if (uiState.showFavoritesOnly) {
+                _filters
+            ) { photos, users, albums, filters ->
+                val filteredPhotos = if (filters.showFavoritesOnly) {
                     photos.filter { it.isFavorite }
                 } else {
                     photos
                 }
 
-                val authorFilteredPhotos = if (uiState.selectedUser != null) {
+                val authorFilteredPhotos = if (filters.selectedUser != null) {
                     val userAlbumIds =
-                        albums.filter { it.userId == uiState.selectedUser.id }.map { it.id }
+                        albums.filter { it.userId == filters.selectedUser.id }.map { it.id }
                     filteredPhotos.filter { it.albumId in userAlbumIds }
                 } else {
                     filteredPhotos
                 }
 
-                val albumFilteredPhotos = if (uiState.selectedAlbum != null) {
-                    authorFilteredPhotos.filter { it.albumId == uiState.selectedAlbum.id }
+                val albumFilteredPhotos = if (filters.selectedAlbum != null) {
+                    authorFilteredPhotos.filter { it.albumId == filters.selectedAlbum.id }
                 } else {
                     authorFilteredPhotos
                 }
 
-                uiState.copy(photos = albumFilteredPhotos, users = users, albums = albums)
-            }.collect { newState ->
-                _uiState.update { newState }
-            }
+                _uiState.update { it.copy(
+                    photos = albumFilteredPhotos,
+                    users = users,
+                    albums = albums,
+                    isLoading = false,
+                    selectedUser = filters.selectedUser,
+                    selectedAlbum = filters.selectedAlbum,
+                    showFavoritesOnly = filters.showFavoritesOnly
+                ) }
+            }.collect()
         }
     }
 
@@ -87,8 +101,6 @@ class PhotoListViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, error = null) }
             try {
                 photoRepository.refreshPhotos()
-                // The combine block handles filtering and updating uiState.photos
-                // No need to collect photos here directly after refresh
             } catch (e: Exception) {
                 _uiState.update { it.copy(isLoading = false, error = e.message) }
             }
@@ -102,7 +114,7 @@ class PhotoListViewModel @Inject constructor(
     }
 
     fun toggleShowFavoritesOnly() {
-        _uiState.update { it.copy(showFavoritesOnly = !it.showFavoritesOnly) }
+        _filters.update { it.copy(showFavoritesOnly = !it.showFavoritesOnly) }
     }
 
     fun onSearchQueryChanged(query: String) {
@@ -110,15 +122,12 @@ class PhotoListViewModel @Inject constructor(
     }
 
     fun onUserSelected(user: User) {
-        _uiState.update { it.copy(selectedUser = user, searchQuery = "") }
-        // Refresh photos to apply new filter
-        fetchPhotos()
+        _filters.update { it.copy(selectedUser = user, selectedAlbum = null) }
+        _uiState.update { it.copy(searchQuery = "") }
     }
 
     fun onClearUserFilter() {
-        _uiState.update { it.copy(selectedUser = null) }
-        // Refresh photos to apply new filter
-        fetchPhotos()
+        _filters.update { it.copy(selectedUser = null) }
     }
 
     fun onAlbumSearchQueryChanged(query: String) {
@@ -126,12 +135,15 @@ class PhotoListViewModel @Inject constructor(
     }
 
     fun onAlbumSelected(album: Album) {
-        _uiState.update { it.copy(selectedAlbum = album, albumSearchQuery = "") }
-        fetchPhotos()
+        _filters.update { it.copy(selectedAlbum = album, selectedUser = null) }
+        _uiState.update { it.copy(albumSearchQuery = "") }
     }
 
     fun onClearAlbumFilter() {
-        _uiState.update { it.copy(selectedAlbum = null) }
-        fetchPhotos()
+        _filters.update { it.copy(selectedAlbum = null) }
+    }
+
+    fun clearFilters() {
+        _filters.update { it.copy(selectedUser = null, selectedAlbum = null) }
     }
 }

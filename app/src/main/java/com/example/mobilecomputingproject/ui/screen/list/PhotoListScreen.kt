@@ -40,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -131,7 +132,36 @@ fun PhotoFilterSection(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text("	Filters", fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 20.sp)
+        Text("\tFilters", fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 20.sp)
+
+        if (uiState.selectedUser != null) {
+            Text(
+                text = uiState.selectedUser!!.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 8.dp),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    brush = Brush.linearGradient(listOf(LightningBlue, LightningTurquoise))
+                )
+            )
+        } else if (uiState.selectedAlbum != null) {
+            Text(
+                text = uiState.selectedAlbum!!.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 8.dp),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    brush = Brush.linearGradient(listOf(LightningBlue, LightningTurquoise))
+                )
+            )
+        }
+
         Row(horizontalArrangement = Arrangement.End) {
             val favoriteTint =
                 if (uiState.showFavoritesOnly) MaterialTheme.colorScheme.primary else Color.Black
@@ -218,36 +248,11 @@ fun PhotoFilterSection(
                         })
                     }
             }
-        }
-    }
-    // Display selected filters
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .padding(horizontal = 8.dp, vertical = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        uiState.selectedUser?.let { user ->
-            Text(
-                text = user.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
-                color = LightningBlue,
-                modifier = Modifier
-                    .background(Color.White, RoundedCornerShape(4.dp))
-                    .padding(horizontal = 4.dp, vertical = 4.dp),
-                textAlign = TextAlign.Center
-            )
-        }
-        uiState.selectedAlbum?.let { album ->
-            Text(
-                text = album.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
-                color = LightningTurquoise,
-                modifier = Modifier
-                    .background(Color.White, RoundedCornerShape(4.dp))
-                    .padding(horizontal = 4.dp, vertical = 4.dp),
-                textAlign = TextAlign.Center
-            )
+            val isFilterActive = uiState.selectedUser != null || uiState.selectedAlbum != null
+            val clearIconTint = if (isFilterActive) Color.Red else Color.Black
+            IconButton(onClick = { viewModel.clearFilters() }) {
+                Icon(Icons.Default.Clear, contentDescription = "Clear Filters", tint = clearIconTint)
+            }
         }
     }
 }
