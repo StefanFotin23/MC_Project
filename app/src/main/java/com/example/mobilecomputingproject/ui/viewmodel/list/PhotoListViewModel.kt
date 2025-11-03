@@ -16,14 +16,19 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+import com.example.mobilecomputingproject.domain.model.Album
+
 data class PhotoListUiState(
     val photos: List<Photo> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
     val showFavoritesOnly: Boolean = false,
     val users: List<User> = emptyList(), // Add users list for author filter
-    val searchQuery: String = "",
-    val selectedUser: User? = null
+    val albums: List<Album> = emptyList(), // Add albums list for album filter
+    val searchQuery: String = "", // For author search
+    val selectedUser: User? = null,
+    val albumSearchQuery: String = "", // For album search
+    val selectedAlbum: Album? = null
 )
 
 @HiltViewModel
@@ -64,7 +69,13 @@ class PhotoListViewModel @Inject constructor(
                     filteredPhotos
                 }
 
-                uiState.copy(photos = authorFilteredPhotos, users = users)
+                val albumFilteredPhotos = if (uiState.selectedAlbum != null) {
+                    authorFilteredPhotos.filter { it.albumId == uiState.selectedAlbum.id }
+                } else {
+                    authorFilteredPhotos
+                }
+
+                uiState.copy(photos = albumFilteredPhotos, users = users, albums = albums)
             }.collect { newState ->
                 _uiState.update { newState }
             }
@@ -107,6 +118,20 @@ class PhotoListViewModel @Inject constructor(
     fun onClearUserFilter() {
         _uiState.update { it.copy(selectedUser = null) }
         // Refresh photos to apply new filter
+        fetchPhotos()
+    }
+
+    fun onAlbumSearchQueryChanged(query: String) {
+        _uiState.update { it.copy(albumSearchQuery = query) }
+    }
+
+    fun onAlbumSelected(album: Album) {
+        _uiState.update { it.copy(selectedAlbum = album, albumSearchQuery = "") }
+        fetchPhotos()
+    }
+
+    fun onClearAlbumFilter() {
+        _uiState.update { it.copy(selectedAlbum = null) }
         fetchPhotos()
     }
 }
