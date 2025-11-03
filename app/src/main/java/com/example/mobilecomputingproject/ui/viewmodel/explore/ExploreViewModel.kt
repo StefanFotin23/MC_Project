@@ -29,6 +29,8 @@ enum class ContentType {
 data class ExploreUiState(
     val posts: List<Post> = emptyList(),
     val photos: List<Photo> = emptyList(),
+    val users: List<User> = emptyList(),
+    val albums: List<Album> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
     val selectedContentType: ContentType = ContentType.POSTS
@@ -87,6 +89,8 @@ class ExploreViewModel @Inject constructor(
                         currentState.copy(
                             posts = explorePosts,
                             photos = explorePhotos,
+                            users = allUsers,
+                            albums = allAlbums,
                             isLoading = false
                         )
                     }

@@ -17,7 +17,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,12 +47,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
-import com.example.mobilecomputingproject.domain.model.Photo
 import com.example.mobilecomputingproject.domain.model.Post
+import com.example.mobilecomputingproject.domain.model.Photo
+
 import com.example.mobilecomputingproject.ui.viewmodel.explore.ContentType
 import com.example.mobilecomputingproject.ui.viewmodel.explore.ExploreViewModel
+import com.example.mobilecomputingproject.domain.model.Album
+import com.example.mobilecomputingproject.domain.model.User
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.foundation.layout.size
+import com.example.mobilecomputingproject.ui.viewmodel.list.PhotoListViewModel
+import coil.compose.AsyncImage
 import com.example.mobilecomputingproject.ui.viewmodel.list.PostListViewModel
+import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.filled.Photo
 import com.example.mobilecomputingproject.ui.screen.list.PostDetailPopup
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,7 +68,8 @@ import com.example.mobilecomputingproject.ui.screen.list.PostDetailPopup
 fun ExploreScreen(
     navController: NavController,
     viewModel: ExploreViewModel = hiltViewModel(),
-    postListViewModel: PostListViewModel = hiltViewModel() // Inject PostListViewModel
+    postListViewModel: PostListViewModel = hiltViewModel(), // Inject PostListViewModel
+    photoListViewModel: PhotoListViewModel = hiltViewModel() // Inject PhotoListViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
@@ -81,7 +91,8 @@ fun ExploreScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
-                navigationIcon = {
+                navigationIcon = {},
+                actions = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
@@ -156,7 +167,9 @@ fun ExploreScreen(
                     ContentType.PHOTOS -> {
                         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             items(uiState.photos) { photo ->
-                                ExplorePhotoItem(photo = photo)
+                                val album = uiState.albums.find { it.id == photo.albumId }
+                                val author = uiState.users.find { it.id == album?.userId }
+                                ExplorePhotoItem(photo = photo, album = album, author = author, viewModel = photoListViewModel)
                             }
                         }
                     }
@@ -196,7 +209,7 @@ fun ExplorePostItem(post: Post, onClick: (Post) -> Unit) {
 }
 
 @Composable
-fun ExplorePhotoItem(photo: Photo) {
+fun ExplorePhotoItem(photo: Photo, album: Album?, author: User?, viewModel: PhotoListViewModel) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -211,11 +224,56 @@ fun ExplorePhotoItem(photo: Photo) {
                     .height(200.dp),
                 contentScale = ContentScale.Crop
             )
-            Text(
-                text = photo.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
-                modifier = Modifier.padding(8.dp),
-                style = MaterialTheme.typography.titleMedium
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = photo.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .weight(1f),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                val favoriteIcon =
+                    if (photo.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
+                val favoriteTint =
+                    if (photo.isFavorite) Color.Red else MaterialTheme.colorScheme.onSurface
+                IconButton(onClick = {
+                    viewModel.toggleFavoriteStatus(
+                        photo.id,
+                        !photo.isFavorite
+                    )
+                }) {
+                    Icon(favoriteIcon, contentDescription = "Toggle Favorite", tint = favoriteTint)
+                }
+            }
+            Column(modifier = Modifier.padding(8.dp)) {
+                author?.let {
+                    Text(
+                        text = "by ${it.name}",
+                        fontStyle = FontStyle.Italic,
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                album?.let {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Default.Photo,
+                            contentDescription = "Album",
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Text(
+                            text = it.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+                    }
+                }
+            }
         }
     }
 }
