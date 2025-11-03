@@ -68,7 +68,7 @@ fun UserDetailScreen(
                                 .padding(16.dp)
                         ) {
                             Text(
-                                text = user.name,
+                                text = user.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
                                 style = MaterialTheme.typography.headlineSmall
                             )
                             Spacer(modifier = Modifier.height(8.dp))
@@ -122,7 +122,7 @@ fun UserDetailScreen(
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Text(
-                                text = "  Name: ${user.company.name}",
+                                text = "  Name: ${user.company.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }}",
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Text(

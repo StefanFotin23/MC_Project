@@ -68,7 +68,7 @@ fun CommentDetailScreen(
                                 .padding(16.dp)
                         ) {
                             Text(
-                                text = comment.name,
+                                text = comment.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
                                 style = MaterialTheme.typography.headlineSmall
                             )
                             Spacer(modifier = Modifier.height(8.dp))

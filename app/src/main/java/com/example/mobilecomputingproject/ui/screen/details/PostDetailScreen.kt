@@ -68,7 +68,7 @@ fun PostDetailScreen(
                                 .padding(16.dp)
                         ) {
                             Text(
-                                text = post.title,
+                                text = post.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
                                 style = MaterialTheme.typography.headlineSmall
                             )
                             Spacer(modifier = Modifier.height(8.dp))

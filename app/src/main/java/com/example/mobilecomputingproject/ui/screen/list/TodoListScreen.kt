@@ -73,7 +73,7 @@ fun TodoListScreen(
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = todo.title,
+                                        text = todo.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
                                         style = MaterialTheme.typography.titleMedium
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))

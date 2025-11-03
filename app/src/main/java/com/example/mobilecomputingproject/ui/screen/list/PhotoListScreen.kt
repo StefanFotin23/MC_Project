@@ -171,7 +171,7 @@ fun PhotoFilterSection(
                 )
                 uiState.users.filter { it.name.contains(uiState.searchQuery, ignoreCase = true) }
                     .forEach { user ->
-                        DropdownMenuItem(text = { Text(user.name) }, onClick = {
+                        DropdownMenuItem(text = { Text(user.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }) }, onClick = {
                             viewModel.onUserSelected(user)
                             onAuthorSearchExpandedChange(false)
                         })
@@ -212,7 +212,7 @@ fun PhotoFilterSection(
                     )
                 }
                     .forEach { album ->
-                        DropdownMenuItem(text = { Text(album.title) }, onClick = {
+                        DropdownMenuItem(text = { Text(album.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }) }, onClick = {
                             viewModel.onAlbumSelected(album)
                             onAlbumSearchExpandedChange(false)
                         })
@@ -231,7 +231,7 @@ fun PhotoFilterSection(
     ) {
         uiState.selectedUser?.let { user ->
             Text(
-                text = user.name,
+                text = user.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
                 color = LightningBlue,
                 modifier = Modifier
                     .background(Color.White, RoundedCornerShape(4.dp))
@@ -241,7 +241,7 @@ fun PhotoFilterSection(
         }
         uiState.selectedAlbum?.let { album ->
             Text(
-                text = album.title,
+                text = album.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
                 color = LightningTurquoise,
                 modifier = Modifier
                     .background(Color.White, RoundedCornerShape(4.dp))
@@ -296,7 +296,7 @@ fun PhotoItem(photo: Photo, album: Album?, author: User?, viewModel: PhotoListVi
             Column(modifier = Modifier.padding(8.dp)) {
                 author?.let {
                     Text(
-                        text = "by ${it.name}",
+                        text = "by ${it.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }}",
                         fontStyle = FontStyle.Italic,
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurface
@@ -310,7 +310,7 @@ fun PhotoItem(photo: Photo, album: Album?, author: User?, viewModel: PhotoListVi
                             modifier = Modifier.size(16.dp)
                         )
                         Text(
-                            text = it.title,
+                            text = it.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.padding(start = 4.dp)

@@ -68,7 +68,7 @@ fun AlbumDetailScreen(
                                 .padding(16.dp)
                         ) {
                             Text(
-                                text = album.title,
+                                text = album.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
                                 style = MaterialTheme.typography.headlineSmall
                             )
                             Spacer(modifier = Modifier.height(8.dp))

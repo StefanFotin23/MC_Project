@@ -63,7 +63,7 @@ fun UserListScreen(
                         ) {
                             Column(modifier = Modifier.padding(12.dp)) {
                                 Text(
-                                    text = user.name,
+                                    text = user.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
                                     style = MaterialTheme.typography.titleMedium
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))

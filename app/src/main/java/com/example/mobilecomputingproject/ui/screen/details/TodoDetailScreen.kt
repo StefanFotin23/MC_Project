@@ -72,7 +72,7 @@ fun TodoDetailScreen(
                                 .padding(16.dp)
                         ) {
                             Text(
-                                text = todo.title,
+                                text = todo.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
                                 style = MaterialTheme.typography.headlineSmall
                             )
                             Spacer(modifier = Modifier.height(8.dp))

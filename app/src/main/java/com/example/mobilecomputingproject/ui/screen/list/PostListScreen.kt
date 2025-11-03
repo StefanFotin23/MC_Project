@@ -183,7 +183,7 @@ fun FilterSection(
         Text("\tFilters", fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 20.sp)
         uiState.selectedUser?.let { user ->
             Text(
-                text = user.name,
+                text = user.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 modifier = Modifier
@@ -234,7 +234,7 @@ fun FilterSection(
                 )
                 uiState.users.filter { it.name.contains(uiState.searchQuery, ignoreCase = true) }
                     .forEach { user ->
-                        DropdownMenuItem(text = { Text(user.name) }, onClick = {
+                        DropdownMenuItem(text = { Text(user.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }) }, onClick = {
                             viewModel.onUserSelected(user)
                             onAuthorSearchExpandedChange(false)
                         })
@@ -269,7 +269,7 @@ fun PostItem(post: Post, author: User?, onClick: (Post) -> Unit) {
                 )
                 author?.let {
                     Text(
-                        text = "by ${it.name}",
+                        text = "by ${it.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }}",
                         fontStyle = FontStyle.Italic,
                         fontSize = 16.sp,
                         color = MaterialTheme.colorScheme.onPrimary,
