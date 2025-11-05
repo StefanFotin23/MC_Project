@@ -56,7 +56,7 @@ import com.example.mobilecomputingproject.domain.model.User
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.foundation.layout.size
 import com.example.mobilecomputingproject.ui.viewmodel.list.PhotoListViewModel
-import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import com.example.mobilecomputingproject.ui.viewmodel.list.PostListViewModel
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Photo
@@ -64,7 +64,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.example.mobilecomputingproject.ui.theme.LightningBlue
 import androidx.compose.ui.text.style.TextAlign
 import com.example.mobilecomputingproject.ui.screen.list.PostDetailPopup
-import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.outlined.PhotoCamera
 import com.example.mobilecomputingproject.ui.theme.LightningTurquoise
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -284,14 +284,23 @@ fun ExplorePhotoItem(photo: Photo, album: Album?, author: User?, viewModel: Phot
             .padding(horizontal = 8.dp, vertical = 4.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            AsyncImage(
+            SubcomposeAsyncImage(
                 model = photo.url,
                 contentDescription = photo.title,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp),
                 contentScale = ContentScale.Crop,
-                error = androidx.compose.ui.graphics.vector.rememberVectorPainter(image = androidx.compose.material.icons.Icons.Default.Image)
+                loading = {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                },
+                error = {
+                    Icon(
+                        imageVector = Icons.Outlined.PhotoCamera,
+                        contentDescription = "Photo placeholder",
+                        modifier = Modifier.size(48.dp)
+                    )
+                }
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),

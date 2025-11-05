@@ -50,12 +50,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import com.example.mobilecomputingproject.domain.model.Photo
 import com.example.mobilecomputingproject.domain.model.Album
 import com.example.mobilecomputingproject.domain.model.User
 import com.example.mobilecomputingproject.ui.theme.LightningBlue
-import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.outlined.PhotoCamera
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import com.example.mobilecomputingproject.ui.theme.LightningTurquoise
 import com.example.mobilecomputingproject.ui.viewmodel.list.PhotoListViewModel
@@ -267,14 +267,23 @@ fun PhotoItem(photo: Photo, album: Album?, author: User?, viewModel: PhotoListVi
             .padding(horizontal = 8.dp, vertical = 4.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            AsyncImage(
+            SubcomposeAsyncImage(
                 model = photo.url,
                 contentDescription = photo.title,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp),
                 contentScale = ContentScale.Crop,
-                error = rememberVectorPainter(image = Icons.Default.Image)
+                loading = {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                },
+                error = {
+                    Icon(
+                        imageVector = Icons.Outlined.PhotoCamera,
+                        contentDescription = "Photo placeholder",
+                        modifier = Modifier.size(48.dp)
+                    )
+                }
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
