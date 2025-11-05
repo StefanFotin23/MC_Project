@@ -86,7 +86,7 @@ fun PhotoListScreen(
                 .fillMaxSize()
                 .padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
             PhotoFilterSection(
                 viewModel = viewModel,

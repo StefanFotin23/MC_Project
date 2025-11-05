@@ -8,9 +8,9 @@ import com.example.mobilecomputingproject.data.api.RetrofitInstance
 import com.example.mobilecomputingproject.domain.model.Photo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-
 class PhotoRepository(
     private val db: AppDatabase
 ) {
@@ -31,8 +31,18 @@ class PhotoRepository(
         withContext(Dispatchers.IO) {
             try {
                 val apiPhotos = RetrofitInstance.api.getPhotos()
-                Log.d("Repository", "Fetched ${apiPhotos.size} photos from API")
-                photoDao.insertAll(apiPhotos.map { it.toEntity() })
+                val localPhotos = photoDao.getAllPhotos().first()
+                val favoritePhotoIds = localPhotos.filter { it.isFavorite }.map { it.id }.toSet()
+
+                val updatedPhotos = apiPhotos.map { apiPhoto ->
+                    val entity = apiPhoto.toEntity()
+                    if (entity.id in favoritePhotoIds) {
+                        entity.copy(isFavorite = true)
+                    } else {
+                        entity
+                    }
+                }
+                photoDao.insertAll(updatedPhotos)
             } catch (e: Exception) {
                 Log.e("Repository", "Error fetching photos: ${e.message}")
             }
