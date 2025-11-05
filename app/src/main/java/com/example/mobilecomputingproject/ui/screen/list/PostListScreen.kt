@@ -301,7 +301,7 @@ fun PostDetailPopup(postId: Int, viewModel: PostListViewModel, onClose: () -> Un
         Card(
             modifier = Modifier
                 .fillMaxWidth(0.9f)
-                .fillMaxHeight(0.8f)
+                .fillMaxSize()
         ) {
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -335,15 +335,7 @@ fun PostDetailPopup(postId: Int, viewModel: PostListViewModel, onClose: () -> Un
                         }
                     }
                 }
-                // TODO: Clarify image source for post detail popup
-                AsyncImage(
-                    model = "https://via.placeholder.com/400", // Placeholder image
-                    contentDescription = "Post Image",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-                    contentScale = ContentScale.Crop
-                )
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()

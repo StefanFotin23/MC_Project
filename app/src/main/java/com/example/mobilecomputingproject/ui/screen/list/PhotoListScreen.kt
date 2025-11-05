@@ -55,6 +55,8 @@ import com.example.mobilecomputingproject.domain.model.Photo
 import com.example.mobilecomputingproject.domain.model.Album
 import com.example.mobilecomputingproject.domain.model.User
 import com.example.mobilecomputingproject.ui.theme.LightningBlue
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import com.example.mobilecomputingproject.ui.theme.LightningTurquoise
 import com.example.mobilecomputingproject.ui.viewmodel.list.PhotoListViewModel
 
@@ -271,7 +273,8 @@ fun PhotoItem(photo: Photo, album: Album?, author: User?, viewModel: PhotoListVi
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                error = rememberVectorPainter(image = Icons.Default.Image)
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),

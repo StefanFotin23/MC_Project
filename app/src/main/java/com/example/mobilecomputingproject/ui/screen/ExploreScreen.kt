@@ -49,7 +49,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.mobilecomputingproject.domain.model.Post
 import com.example.mobilecomputingproject.domain.model.Photo
-
 import com.example.mobilecomputingproject.ui.viewmodel.explore.ContentType
 import com.example.mobilecomputingproject.ui.viewmodel.explore.ExploreViewModel
 import com.example.mobilecomputingproject.domain.model.Album
@@ -65,6 +64,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.example.mobilecomputingproject.ui.theme.LightningBlue
 import androidx.compose.ui.text.style.TextAlign
 import com.example.mobilecomputingproject.ui.screen.list.PostDetailPopup
+import androidx.compose.material.icons.filled.Image
 import com.example.mobilecomputingproject.ui.theme.LightningTurquoise
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,7 +90,11 @@ fun ExploreScreen(
                         },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Default.Explore, contentDescription = "Explore", modifier = Modifier.padding(end = 8.dp))
+                        Icon(
+                            Icons.Default.Explore,
+                            contentDescription = "Explore",
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
                         Text(text = "Explore")
                     }
                 },
@@ -120,15 +124,24 @@ fun ExploreScreen(
             ) {
                 // Posts Filter Box
                 val isPostsSelected = uiState.selectedContentType == ContentType.POSTS
-                val postsBackgroundBrush = if (isPostsSelected) Brush.linearGradient(listOf(Color(0xFF32527B), Color(0xFF75E9E4))) else null
+                val postsBackgroundBrush = if (isPostsSelected) Brush.linearGradient(
+                    listOf(
+                        Color(0xFF32527B),
+                        Color(0xFF75E9E4)
+                    )
+                ) else null
                 val postsTextColor = if (isPostsSelected) Color.White else Color.Black
-                val postsBorderBrush = Brush.linearGradient(listOf(Color(0xFF32527B), Color(0xFF75E9E4)))
+                val postsBorderBrush =
+                    Brush.linearGradient(listOf(Color(0xFF32527B), Color(0xFF75E9E4)))
 
                 Box(
                     modifier = Modifier
                         .weight(1f)
                         .height(48.dp)
-                        .background(postsBackgroundBrush ?: SolidColor(Color.White), RoundedCornerShape(8.dp))
+                        .background(
+                            postsBackgroundBrush ?: SolidColor(Color.White),
+                            RoundedCornerShape(8.dp)
+                        )
                         .border(1.dp, postsBorderBrush, RoundedCornerShape(8.dp))
                         .clickable { viewModel.toggleContentType(ContentType.POSTS) },
                     contentAlignment = Alignment.Center
@@ -138,15 +151,24 @@ fun ExploreScreen(
 
                 // Photos Filter Box
                 val isPhotosSelected = uiState.selectedContentType == ContentType.PHOTOS
-                val photosBackgroundBrush = if (isPhotosSelected) Brush.linearGradient(listOf(Color(0xFF32527B), Color(0xFF75E9E4))) else null
+                val photosBackgroundBrush = if (isPhotosSelected) Brush.linearGradient(
+                    listOf(
+                        Color(0xFF32527B),
+                        Color(0xFF75E9E4)
+                    )
+                ) else null
                 val photosTextColor = if (isPhotosSelected) Color.White else Color.Black
-                val photosBorderBrush = Brush.linearGradient(listOf(Color(0xFF32527B), Color(0xFF75E9E4)))
+                val photosBorderBrush =
+                    Brush.linearGradient(listOf(Color(0xFF32527B), Color(0xFF75E9E4)))
 
                 Box(
                     modifier = Modifier
                         .weight(1f)
                         .height(48.dp)
-                        .background(photosBackgroundBrush ?: SolidColor(Color.White), RoundedCornerShape(8.dp))
+                        .background(
+                            photosBackgroundBrush ?: SolidColor(Color.White),
+                            RoundedCornerShape(8.dp)
+                        )
                         .border(1.dp, photosBorderBrush, RoundedCornerShape(8.dp))
                         .clickable { viewModel.toggleContentType(ContentType.PHOTOS) },
                     contentAlignment = Alignment.Center
@@ -159,6 +181,15 @@ fun ExploreScreen(
                 CircularProgressIndicator()
             } else if (uiState.error != null) {
                 Text(text = "Error: ${uiState.error}", color = MaterialTheme.colorScheme.error)
+            } else if (uiState.posts.isEmpty() && uiState.photos.isEmpty()) {
+                Text(
+                    text = "Add favorites and then discover more!",
+                    modifier = Modifier.align(Alignment.CenterHorizontally).padding(16.dp),
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        brush = Brush.linearGradient(listOf(LightningBlue, LightningTurquoise))
+                    ),
+                    textAlign = TextAlign.Center
+                )
             } else {
                 when (uiState.selectedContentType) {
                     ContentType.POSTS -> {
@@ -166,17 +197,25 @@ fun ExploreScreen(
                             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 items(uiState.posts) { post ->
                                     val author = uiState.users.find { it.id == post.userId }
-                                    ExplorePostItem(post = post, author = author) { selectedPost = post }
+                                    ExplorePostItem(post = post, author = author) {
+                                        selectedPost = post
+                                    }
                                 }
                             }
                         }
                     }
+
                     ContentType.PHOTOS -> {
                         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             items(uiState.photos) { photo ->
                                 val album = uiState.albums.find { it.id == photo.albumId }
                                 val author = uiState.users.find { it.id == album?.userId }
-                                ExplorePhotoItem(photo = photo, album = album, author = author, viewModel = photoListViewModel)
+                                ExplorePhotoItem(
+                                    photo = photo,
+                                    album = album,
+                                    author = author,
+                                    viewModel = photoListViewModel
+                                )
                             }
                         }
                     }
@@ -251,7 +290,8 @@ fun ExplorePhotoItem(photo: Photo, album: Album?, author: User?, viewModel: Phot
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                error = androidx.compose.ui.graphics.vector.rememberVectorPainter(image = androidx.compose.material.icons.Icons.Default.Image)
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
