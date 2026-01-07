@@ -99,8 +99,8 @@ class PostListViewModel @Inject constructor(
         }
     }
 
-    fun toggleShowFavoritesOnly() {
-        _uiState.update { it.copy(showFavoritesOnly = !it.showFavoritesOnly) }
+    fun toggleShowFavoritesOnly(showFavorites: Boolean) {
+        _uiState.update { it.copy(showFavoritesOnly = showFavorites) }
     }
 
     fun onSearchQueryChanged(query: String) {

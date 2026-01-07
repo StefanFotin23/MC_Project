@@ -1,5 +1,6 @@
 package com.example.mobilecomputingproject
 
+import NavGraph
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,7 +13,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.rememberNavController
-import com.example.mobilecomputingproject.ui.navigation.NavGraph
 import com.example.mobilecomputingproject.ui.theme.MobileComputingProjectTheme
 import dagger.hilt.android.AndroidEntryPoint
 

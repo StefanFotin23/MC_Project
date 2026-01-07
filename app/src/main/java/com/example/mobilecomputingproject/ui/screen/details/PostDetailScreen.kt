@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
@@ -25,6 +23,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobilecomputingproject.R
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import com.example.mobilecomputingproject.ui.components.ThemedCardItem
 import com.example.mobilecomputingproject.ui.viewmodel.details.PostDetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,6 +53,16 @@ fun PostDetailScreen(
                             contentDescription = stringResource(R.string.back)
                         )
                     }
+                },
+                actions = {
+                    val post = uiState.post
+                    if (post != null) {
+                        val favoriteIcon = if (post.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
+                        val favoriteTint = if (post.isFavorite) Color.Red else MaterialTheme.colorScheme.onSurface
+                        IconButton(onClick = { viewModel.toggleFavoriteStatus(!post.isFavorite) }) {
+                            Icon(favoriteIcon, contentDescription = stringResource(R.string.toggle_favorite), tint = favoriteTint)
+                        }
+                    }
                 }
             )
         }
@@ -66,17 +82,34 @@ fun PostDetailScreen(
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(16.dp)
                         ) {
-                            Text(
-                                text = post.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
-                                style = MaterialTheme.typography.headlineSmall
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = post.body,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
+                            ThemedCardItem(modifier = Modifier.padding(horizontal = 16.dp)) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(Brush.verticalGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary)))
+                                        .padding(horizontal = 16.dp, vertical = 24.dp)
+                                ) {
+                                    Text(
+                                        text = post.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
+                                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                                        color = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                }
+                            }
+                            ThemedCardItem(modifier = Modifier.padding(horizontal = 16.dp)) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(Color.LightGray.copy(alpha = 0.2f))
+                                        .padding(16.dp)
+                                ) {
+                                    Text(
+                                        text = post.body,
+                                        style = MaterialTheme.typography.bodyLarge
+                                    )
+                                }
+                            }
                         }
                     }
                 }

@@ -1,43 +1,28 @@
 package com.example.mobilecomputingproject.ui.screen.list
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Photo
-import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.WineBar
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -48,111 +33,49 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.platform.LocalContext
-import android.widget.Toast
-import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobilecomputingproject.R
 import com.example.mobilecomputingproject.domain.model.Post
 import com.example.mobilecomputingproject.domain.model.User
+import androidx.navigation.NavController
 import com.example.mobilecomputingproject.ui.viewmodel.list.PostListViewModel
+import com.example.mobilecomputingproject.ui.components.ThemedCardItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostListScreen(
     viewModel: PostListViewModel = hiltViewModel(),
-    onNavigateToPhotoList: () -> Unit,
-    onNavigateToExplore: () -> Unit
+    navController: NavController
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var authorSearchExpanded by remember { mutableStateOf(false) }
-    var selectedPost by remember { mutableStateOf<Post?>(null) }
     val context = LocalContext.current
 
-    Scaffold(
-        containerColor = Color.Transparent,
-        topBar = {
-            androidx.compose.material3.TopAppBar(
-                title = { Text(text = stringResource(id = R.string.app_name)) },
-                modifier = Modifier.background(Color.White),
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
-            )
-        },
-        bottomBar = {
-            BottomAppBar(containerColor = Color.White) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        IconButton(onClick = {
-                            viewModel.refreshPosts()
-                            Toast.makeText(context, context.getString(R.string.refreshing), Toast.LENGTH_SHORT).show()
-                        }) {
-                            Icon(Icons.Default.Home, contentDescription = stringResource(R.string.posts))
-                        }
-                        Text(stringResource(R.string.posts))
-                    }
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        IconButton(onClick = onNavigateToPhotoList) {
-                            Icon(Icons.Default.Photo, contentDescription = stringResource(R.string.photos))
-                        }
-                        Text(stringResource(R.string.photos))
-                    }
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        IconButton(onClick = onNavigateToExplore) {
-                            Icon(Icons.Default.Explore, contentDescription = stringResource(R.string.explore))
-                        }
-                        Text(stringResource(R.string.explore))
-                    }
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        val favoriteIcon = if (uiState.showFavoritesOnly) Icons.Default.Favorite else Icons.Default.FavoriteBorder
-                        val favoriteTint = if (uiState.showFavoritesOnly) MaterialTheme.colorScheme.primary else Color.Black
-                        IconButton(onClick = { viewModel.toggleShowFavoritesOnly() }) {
-                            Icon(favoriteIcon, contentDescription = stringResource(R.string.favorites), tint = favoriteTint)
-                        }
-                        Text(stringResource(R.string.favorites))
+    Column(
+        modifier = Modifier
+            .background(Color.White)
+    ) {
+        FilterSection(
+            viewModel = viewModel,
+            authorSearchExpanded = authorSearchExpanded,
+            onAuthorSearchExpandedChange = { authorSearchExpanded = it }
+        )
+        Column(modifier = Modifier.padding(16.dp)) {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                items(uiState.posts) { post ->
+                    PostItem(
+                        post = post,
+                        author = uiState.users.find { it.id == post.userId }) {
+                        navController.navigate("post_detail/${post.id}")
                     }
                 }
             }
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .background(Color.White)
-        ) {
-            FilterSection(
-                viewModel = viewModel,
-                authorSearchExpanded = authorSearchExpanded,
-                onAuthorSearchExpandedChange = { authorSearchExpanded = it }
-            )
-            Column(modifier = Modifier.padding(16.dp)) {
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(uiState.posts) { post ->
-                        PostItem(
-                            post = post,
-                            author = uiState.users.find { it.id == post.userId }) {
-                            selectedPost = post
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    selectedPost?.let { post ->
-        PostDetailPopup(postId = post.id, viewModel = viewModel) {
-            selectedPost = null
         }
     }
 }
@@ -165,6 +88,7 @@ fun FilterSection(
     onAuthorSearchExpandedChange: (Boolean) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     Row(
         modifier = Modifier
@@ -197,6 +121,12 @@ fun FilterSection(
                     contentDescription = stringResource(R.string.filter_by_top_rated),
                     tint = starTint
                 )
+            }
+            // Favorites Filter
+            val favoriteIcon = if (uiState.showFavoritesOnly) Icons.Default.Favorite else Icons.Default.FavoriteBorder
+            val favoriteTint = if (uiState.showFavoritesOnly) MaterialTheme.colorScheme.primary else Color.Black
+            IconButton(onClick = { viewModel.toggleShowFavoritesOnly(!uiState.showFavoritesOnly) }) {
+                Icon(favoriteIcon, contentDescription = stringResource(R.string.favorites), tint = favoriteTint)
             }
             IconButton(onClick = { onAuthorSearchExpandedChange(!authorSearchExpanded) }) {
                 Icon(
@@ -239,14 +169,7 @@ fun FilterSection(
 
 @Composable
 fun PostItem(post: Post, author: User?, onClick: (Post) -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
-            .clickable { onClick(post) },
-        shape = RoundedCornerShape(8.dp)
-    ) {
+    ThemedCardItem(onClick = { onClick(post) }) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier
@@ -257,7 +180,7 @@ fun PostItem(post: Post, author: User?, onClick: (Post) -> Unit) {
                 Text(
                     text = post.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onPrimary
+                    color = if (post.isFavorite) Color.Red else MaterialTheme.colorScheme.onPrimary
                 )
                 author?.let {
                     Text(
@@ -276,66 +199,6 @@ fun PostItem(post: Post, author: User?, onClick: (Post) -> Unit) {
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis
                 )
-            }
-        }
-    }
-}
-
-@Composable
-fun PostDetailPopup(postId: Int, viewModel: PostListViewModel, onClose: () -> Unit) {
-    val uiState by viewModel.uiState.collectAsState()
-    val post = uiState.posts.find { it.id == postId } ?: return // Return if post not found
-
-    Dialog(
-        onDismissRequest = onClose,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
-    ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .fillMaxSize()
-        ) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Top
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Brush.verticalGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary)))
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = post.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.weight(1f) // Allow text to take available space
-                    )
-                    Row {
-                        val favoriteIcon = if (post.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
-                        val favoriteTint = if (post.isFavorite) Color.Red else MaterialTheme.colorScheme.onPrimary
-                        IconButton(onClick = { viewModel.toggleFavoriteStatus(post.id, !post.isFavorite) }) {
-                            Icon(favoriteIcon, contentDescription = stringResource(R.string.toggle_favorite), tint = favoriteTint)
-                        }
-                        IconButton(
-                            onClick = onClose
-                        ) {
-                            Icon(Icons.Default.Close, contentDescription = stringResource(R.string.close), tint = MaterialTheme.colorScheme.onPrimary)
-                        }
-                    }
-                }
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.Top
-                ) {
-                    Text(text = post.body.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() })
-                }
             }
         }
     }

@@ -28,7 +28,9 @@ class PostDetailViewModel @Inject constructor(
     private val postId: Int = (savedStateHandle.get<String>("postId")!!).toInt()
 
     val uiState: StateFlow<PostDetailUiState> = repository.getPostById(postId)
-        .map { PostDetailUiState(post = it, isLoading = false) }
+        .map { post ->
+            PostDetailUiState(post = post, isLoading = false)
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),
@@ -38,6 +40,12 @@ class PostDetailViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             repository.refreshPost(postId)
+        }
+    }
+
+    fun toggleFavoriteStatus(isFavorite: Boolean) {
+        viewModelScope.launch {
+            repository.updateFavoriteStatus(postId, isFavorite)
         }
     }
 }

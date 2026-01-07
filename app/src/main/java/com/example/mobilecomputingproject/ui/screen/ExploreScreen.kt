@@ -1,6 +1,5 @@
 package com.example.mobilecomputingproject.ui.screen
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,7 +15,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Card
@@ -25,22 +23,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -57,173 +48,134 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.foundation.layout.size
 import com.example.mobilecomputingproject.ui.viewmodel.list.PhotoListViewModel
 import coil.compose.SubcomposeAsyncImage
+import androidx.navigation.NavController
 import com.example.mobilecomputingproject.ui.viewmodel.list.PostListViewModel
-import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.style.TextAlign
-import com.example.mobilecomputingproject.ui.screen.list.PostDetailPopup
 import androidx.compose.material.icons.outlined.PhotoCamera
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExploreScreen(
-    onNavigateBack: () -> Unit,
     viewModel: ExploreViewModel = hiltViewModel(),
     postListViewModel: PostListViewModel = hiltViewModel(), // Inject PostListViewModel
-    photoListViewModel: PhotoListViewModel = hiltViewModel() // Inject PhotoListViewModel
+    photoListViewModel: PhotoListViewModel = hiltViewModel(), // Inject PhotoListViewModel
+    navController: NavController
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
-    var selectedPost by remember { mutableStateOf<Post?>(null) }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Row(
-                        modifier = Modifier.clickable {
-                            viewModel.loadExploreContent()
-                            Toast.makeText(context, context.getString(R.string.refreshing), Toast.LENGTH_SHORT).show()
-                        },
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            Icons.Default.Explore,
-                            contentDescription = stringResource(R.string.explore),
-                            modifier = Modifier.padding(end = 8.dp)
-                        )
-                        Text(text = stringResource(R.string.explore))
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
-        Column(
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top // Align content to top
+    ) {
+        Row(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top // Align content to top
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
+            // Posts Filter Box
+            val isPostsSelected = uiState.selectedContentType == ContentType.POSTS
+            val postsBackgroundBrush = if (isPostsSelected) Brush.linearGradient(
+                listOf(
+                    MaterialTheme.colorScheme.primary,
+                    MaterialTheme.colorScheme.secondary
+                )
+            ) else null
+            val postsTextColor = if (isPostsSelected) Color.White else Color.Black
+            val postsBorderBrush =
+                Brush.linearGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary))
+
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .weight(1f)
+                    .height(48.dp)
+                    .background(
+                        postsBackgroundBrush ?: SolidColor(Color.White),
+                        RoundedCornerShape(8.dp)
+                    )
+                    .border(1.dp, postsBorderBrush, RoundedCornerShape(8.dp))
+                    .clickable { viewModel.toggleContentType(ContentType.POSTS) },
+                contentAlignment = Alignment.Center
             ) {
-                // Posts Filter Box
-                val isPostsSelected = uiState.selectedContentType == ContentType.POSTS
-                val postsBackgroundBrush = if (isPostsSelected) Brush.linearGradient(
-                    listOf(
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.secondary
-                    )
-                ) else null
-                val postsTextColor = if (isPostsSelected) Color.White else Color.Black
-                val postsBorderBrush =
-                    Brush.linearGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary))
-
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp)
-                        .background(
-                            postsBackgroundBrush ?: SolidColor(Color.White),
-                            RoundedCornerShape(8.dp)
-                        )
-                        .border(1.dp, postsBorderBrush, RoundedCornerShape(8.dp))
-                        .clickable { viewModel.toggleContentType(ContentType.POSTS) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(stringResource(R.string.posts), color = postsTextColor, fontWeight = FontWeight.Bold)
-                }
-
-                // Photos Filter Box
-                val isPhotosSelected = uiState.selectedContentType == ContentType.PHOTOS
-                val photosBackgroundBrush = if (isPhotosSelected) Brush.linearGradient(
-                    listOf(
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.secondary
-                    )
-                ) else null
-                val photosTextColor = if (isPhotosSelected) Color.White else Color.Black
-                val photosBorderBrush =
-                    Brush.linearGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary))
-
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp)
-                        .background(
-                            photosBackgroundBrush ?: SolidColor(Color.White),
-                            RoundedCornerShape(8.dp)
-                        )
-                        .border(1.dp, photosBorderBrush, RoundedCornerShape(8.dp))
-                        .clickable { viewModel.toggleContentType(ContentType.PHOTOS) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(stringResource(R.string.photos), color = photosTextColor, fontWeight = FontWeight.Bold)
-                }
+                Text(stringResource(R.string.posts), color = postsTextColor, fontWeight = FontWeight.Bold)
             }
 
-            if (uiState.isLoading) {
-                CircularProgressIndicator()
-            } else if (uiState.error != null) {
-                Text(text = stringResource(R.string.error_prefix) + uiState.error, color = MaterialTheme.colorScheme.error)
-            } else if (uiState.posts.isEmpty() && uiState.photos.isEmpty()) {
-                Text(
-                    text = stringResource(R.string.add_favorites_discover_more),
-                    modifier = Modifier.align(Alignment.CenterHorizontally).padding(16.dp),
-                    style = MaterialTheme.typography.headlineSmall.copy(
-                        brush = Brush.linearGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary))
-                    ),
-                    textAlign = TextAlign.Center
+            // Photos Filter Box
+            val isPhotosSelected = uiState.selectedContentType == ContentType.PHOTOS
+            val photosBackgroundBrush = if (isPhotosSelected) Brush.linearGradient(
+                listOf(
+                    MaterialTheme.colorScheme.primary,
+                    MaterialTheme.colorScheme.secondary
                 )
-            } else {
-                when (uiState.selectedContentType) {
-                    ContentType.POSTS -> {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                items(uiState.posts) { post ->
-                                    val author = uiState.users.find { it.id == post.userId }
-                                    ExplorePostItem(post = post, author = author) {
-                                        selectedPost = post
-                                    }
+            ) else null
+            val photosTextColor = if (isPhotosSelected) Color.White else Color.Black
+            val photosBorderBrush =
+                Brush.linearGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary))
+
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(48.dp)
+                    .background(
+                        photosBackgroundBrush ?: SolidColor(Color.White),
+                        RoundedCornerShape(8.dp)
+                    )
+                    .border(1.dp, photosBorderBrush, RoundedCornerShape(8.dp))
+                    .clickable { viewModel.toggleContentType(ContentType.PHOTOS) },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(stringResource(R.string.photos), color = photosTextColor, fontWeight = FontWeight.Bold)
+            }
+        }
+
+        if (uiState.isLoading) {
+            CircularProgressIndicator()
+        } else if (uiState.error != null) {
+            Text(text = stringResource(R.string.error_prefix) + uiState.error, color = MaterialTheme.colorScheme.error)
+        } else if (uiState.posts.isEmpty() && uiState.photos.isEmpty()) {
+            Text(
+                text = stringResource(R.string.add_favorites_discover_more),
+                modifier = Modifier.align(Alignment.CenterHorizontally).padding(16.dp),
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    brush = Brush.linearGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary))
+                ),
+                textAlign = TextAlign.Center
+            )
+        } else {
+            when (uiState.selectedContentType) {
+                ContentType.POSTS -> {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            items(uiState.posts) { post ->
+                                val author = uiState.users.find { it.id == post.userId }
+                                ExplorePostItem(post = post, author = author) {
+                                    navController.navigate("post_detail/${post.id}")
                                 }
                             }
                         }
                     }
+                }
 
-                    ContentType.PHOTOS -> {
-                        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            items(uiState.photos) { photo ->
-                                val album = uiState.albums.find { it.id == photo.albumId }
-                                val author = uiState.users.find { it.id == album?.userId }
-                                ExplorePhotoItem(
-                                    photo = photo,
-                                    album = album,
-                                    author = author,
-                                    viewModel = photoListViewModel
-                                )
-                            }
+                ContentType.PHOTOS -> {
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        items(uiState.photos) { photo ->
+                            val album = uiState.albums.find { it.id == photo.albumId }
+                            val author = uiState.users.find { it.id == album?.userId }
+                            ExplorePhotoItem(
+                                photo = photo,
+                                album = album,
+                                author = author,
+                                viewModel = photoListViewModel
+                            )
                         }
                     }
                 }
             }
-        }
-    }
-
-    selectedPost?.let { post ->
-        PostDetailPopup(postId = post.id, viewModel = postListViewModel) {
-            selectedPost = null
         }
     }
 }

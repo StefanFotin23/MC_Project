@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -26,18 +25,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -59,51 +54,35 @@ import com.example.mobilecomputingproject.ui.viewmodel.list.PhotoListViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PhotoListScreen(
-    viewModel: PhotoListViewModel = hiltViewModel(),
-    onNavigateBack: () -> Unit
+    viewModel: PhotoListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var authorSearchExpanded by remember { mutableStateOf(false) }
     var albumSearchExpanded by remember { mutableStateOf(false) }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = stringResource(R.string.photos)) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
-        ) {
-            PhotoFilterSection(
-                viewModel = viewModel,
-                authorSearchExpanded = authorSearchExpanded,
-                onAuthorSearchExpandedChange = { authorSearchExpanded = it },
-                albumSearchExpanded = albumSearchExpanded,
-                onAlbumSearchExpandedChange = { albumSearchExpanded = it }
-            )
-            if (uiState.isLoading) {
-                CircularProgressIndicator()
-            } else if (uiState.error != null) {
-                Text(text = stringResource(R.string.error_prefix) + uiState.error, color = MaterialTheme.colorScheme.error)
-            } else {
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(uiState.photos) { photo ->
-                        val album = uiState.albums.find { it.id == photo.albumId }
-                        val author = uiState.users.find { it.id == album?.userId }
-                        PhotoItem(photo = photo, album = album, author = author, viewModel = viewModel)
-                    }
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
+    ) {
+        PhotoFilterSection(
+            viewModel = viewModel,
+            authorSearchExpanded = authorSearchExpanded,
+            onAuthorSearchExpandedChange = { authorSearchExpanded = it },
+            albumSearchExpanded = albumSearchExpanded,
+            onAlbumSearchExpandedChange = { albumSearchExpanded = it }
+        )
+        if (uiState.isLoading) {
+            CircularProgressIndicator()
+        } else if (uiState.error != null) {
+            Text(text = stringResource(R.string.error_prefix) + uiState.error, color = MaterialTheme.colorScheme.error)
+        } else {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                items(uiState.photos) { photo ->
+                    val album = uiState.albums.find { it.id == photo.albumId }
+                    val author = uiState.users.find { it.id == album?.userId }
+                    PhotoItem(photo = photo, album = album, author = author, viewModel = viewModel)
                 }
             }
         }
