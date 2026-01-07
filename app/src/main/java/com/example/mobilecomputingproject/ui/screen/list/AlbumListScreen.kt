@@ -22,9 +22,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.mobilecomputingproject.R
 import com.example.mobilecomputingproject.ui.viewmodel.list.AlbumListViewModel
 
 @Composable
@@ -43,7 +44,7 @@ fun AlbumListScreen(
 
             uiState.albums.isEmpty() -> {
                 Text(
-                    text = "No albums available",
+                    text = stringResource(R.string.no_albums_available),
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
@@ -68,7 +69,7 @@ fun AlbumListScreen(
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "User ID: ${album.userId}",
+                                    text = stringResource(R.string.user_id, album.userId),
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                             }

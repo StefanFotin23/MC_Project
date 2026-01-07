@@ -1,10 +1,10 @@
 package com.example.mobilecomputingproject.data.repository
 
 import android.util.Log
-import com.example.mobilecomputingproject.data.local.AppDatabase
+import com.example.mobilecomputingproject.data.api.JsonPlaceholderApi
+import com.example.mobilecomputingproject.data.local.dao.AlbumDao
 import com.example.mobilecomputingproject.data.local.entity.toDomain
 import com.example.mobilecomputingproject.data.local.entity.toEntity
-import com.example.mobilecomputingproject.data.api.RetrofitInstance
 import com.example.mobilecomputingproject.domain.model.Album
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -12,10 +12,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class AlbumRepository(
-    private val db: AppDatabase
+    private val albumDao: AlbumDao,
+    private val api: JsonPlaceholderApi
 ) {
-
-    private val albumDao = db.albumDao()
 
     /**
      * Returns a flow of albums from the local cache.
@@ -30,7 +29,7 @@ class AlbumRepository(
     suspend fun refreshAlbums() {
         withContext(Dispatchers.IO) {
             try {
-                val apiAlbums = RetrofitInstance.api.getAlbums()
+                val apiAlbums = api.getAlbums()
                 Log.d("Repository", "Fetched ${apiAlbums.size} albums from API")
                 albumDao.insertAll(apiAlbums.map { it.toEntity() })
             } catch (e: Exception) {
@@ -50,7 +49,7 @@ class AlbumRepository(
     suspend fun refreshAlbum(id: Int) {
         withContext(Dispatchers.IO) {
             try {
-                val apiAlbum = RetrofitInstance.api.getAlbumById(id)
+                val apiAlbum = api.getAlbumById(id)
                 albumDao.insertAll(listOf(apiAlbum.toEntity()))
             } catch (e: Exception) {
                 Log.e("Repository", "Error fetching album $id: ${e.message}")

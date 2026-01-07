@@ -55,27 +55,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.platform.LocalContext
 import android.widget.Toast
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import coil.compose.AsyncImage
 import com.example.mobilecomputingproject.R
 import com.example.mobilecomputingproject.domain.model.Post
 import com.example.mobilecomputingproject.domain.model.User
-import com.example.mobilecomputingproject.ui.navigation.Routes
-import com.example.mobilecomputingproject.ui.theme.LightningBlue
-import com.example.mobilecomputingproject.ui.theme.LightningTurquoise
 import com.example.mobilecomputingproject.ui.viewmodel.list.PostListViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostListScreen(
     viewModel: PostListViewModel = hiltViewModel(),
-    navController: NavController
+    onNavigateToPhotoList: () -> Unit,
+    onNavigateToExplore: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var authorSearchExpanded by remember { mutableStateOf(false) }
@@ -101,31 +96,31 @@ fun PostListScreen(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         IconButton(onClick = {
                             viewModel.refreshPosts()
-                            Toast.makeText(context, "Refreshing posts...", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.refreshing), Toast.LENGTH_SHORT).show()
                         }) {
-                            Icon(Icons.Default.Home, contentDescription = "Posts")
+                            Icon(Icons.Default.Home, contentDescription = stringResource(R.string.posts))
                         }
-                        Text("Posts")
+                        Text(stringResource(R.string.posts))
                     }
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        IconButton(onClick = { navController.navigate(Routes.PHOTO_LIST) }) {
-                            Icon(Icons.Default.Photo, contentDescription = "Photos")
+                        IconButton(onClick = onNavigateToPhotoList) {
+                            Icon(Icons.Default.Photo, contentDescription = stringResource(R.string.photos))
                         }
-                        Text("Photos")
+                        Text(stringResource(R.string.photos))
                     }
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        IconButton(onClick = { navController.navigate(Routes.EXPLORE) }) {
-                            Icon(Icons.Default.Explore, contentDescription = "Explore")
+                        IconButton(onClick = onNavigateToExplore) {
+                            Icon(Icons.Default.Explore, contentDescription = stringResource(R.string.explore))
                         }
-                        Text("Explore")
+                        Text(stringResource(R.string.explore))
                     }
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         val favoriteIcon = if (uiState.showFavoritesOnly) Icons.Default.Favorite else Icons.Default.FavoriteBorder
                         val favoriteTint = if (uiState.showFavoritesOnly) MaterialTheme.colorScheme.primary else Color.Black
                         IconButton(onClick = { viewModel.toggleShowFavoritesOnly() }) {
-                            Icon(favoriteIcon, contentDescription = "Favorites", tint = favoriteTint)
+                            Icon(favoriteIcon, contentDescription = stringResource(R.string.favorites), tint = favoriteTint)
                         }
-                        Text("Favorites")
+                        Text(stringResource(R.string.favorites))
                     }
                 }
             }
@@ -180,18 +175,16 @@ fun FilterSection(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text("\tFilters", fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 20.sp)
+        Text(stringResource(R.string.filters), color = Color.Black, style = MaterialTheme.typography.titleMedium)
         uiState.selectedUser?.let { user ->
             Text(
                 text = user.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 8.dp),
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleMedium.copy(
-                    brush = Brush.linearGradient(listOf(LightningBlue, LightningTurquoise))
+                style = MaterialTheme.typography.titleSmall.copy(
+                    brush = Brush.linearGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary))
                 )
             )
         }
@@ -201,14 +194,14 @@ fun FilterSection(
             IconButton(onClick = { viewModel.toggleTopRatedFilter() }) {
                 Icon(
                     Icons.Default.WineBar,
-                    contentDescription = "Filter by Top Rated",
+                    contentDescription = stringResource(R.string.filter_by_top_rated),
                     tint = starTint
                 )
             }
             IconButton(onClick = { onAuthorSearchExpandedChange(!authorSearchExpanded) }) {
                 Icon(
                     Icons.Default.Person,
-                    contentDescription = "Filter by Author",
+                    contentDescription = stringResource(R.string.filter_by_author),
                     tint = Color.Black
                 )
             }
@@ -219,15 +212,15 @@ fun FilterSection(
                 TextField(
                     value = uiState.searchQuery,
                     onValueChange = { viewModel.onSearchQueryChanged(it) },
-                    placeholder = { Text("Search by author") },
+                    placeholder = { Text(stringResource(R.string.search_by_author)) },
                     trailingIcon = {
                         if (uiState.searchQuery.isNotEmpty()) {
                             IconButton(onClick = { viewModel.onSearchQueryChanged("") }) {
-                                Icon(Icons.Default.Clear, contentDescription = "Clear search")
+                                Icon(Icons.Default.Clear, contentDescription = stringResource(R.string.clear_search))
                             }
                         } else if (uiState.selectedUser != null) {
                             IconButton(onClick = { viewModel.onClearUserFilter() }) {
-                                Icon(Icons.Default.Clear, contentDescription = "Clear filter")
+                                Icon(Icons.Default.Clear, contentDescription = stringResource(R.string.clear_filter))
                             }
                         }
                     }
@@ -258,20 +251,19 @@ fun PostItem(post: Post, author: User?, onClick: (Post) -> Unit) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Brush.verticalGradient(listOf(LightningBlue, LightningTurquoise)))
+                    .background(Brush.verticalGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary)))
                     .padding(16.dp)
             ) {
                 Text(
                     text = post.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
+                    style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
                 author?.let {
                     Text(
-                        text = "by ${it.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }}",
+                        text = stringResource(R.string.by_author, it.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }),
+                        style = MaterialTheme.typography.bodyLarge,
                         fontStyle = FontStyle.Italic,
-                        fontSize = 16.sp,
                         color = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.End
@@ -310,15 +302,14 @@ fun PostDetailPopup(postId: Int, viewModel: PostListViewModel, onClose: () -> Un
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Brush.verticalGradient(listOf(LightningBlue, LightningTurquoise)))
+                        .background(Brush.verticalGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary)))
                         .padding(16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = post.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp,
+                        style = MaterialTheme.typography.headlineMedium,
                         color = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.weight(1f) // Allow text to take available space
                     )
@@ -326,12 +317,12 @@ fun PostDetailPopup(postId: Int, viewModel: PostListViewModel, onClose: () -> Un
                         val favoriteIcon = if (post.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
                         val favoriteTint = if (post.isFavorite) Color.Red else MaterialTheme.colorScheme.onPrimary
                         IconButton(onClick = { viewModel.toggleFavoriteStatus(post.id, !post.isFavorite) }) {
-                            Icon(favoriteIcon, contentDescription = "Toggle Favorite", tint = favoriteTint)
+                            Icon(favoriteIcon, contentDescription = stringResource(R.string.toggle_favorite), tint = favoriteTint)
                         }
                         IconButton(
                             onClick = onClose
                         ) {
-                            Icon(Icons.Default.Close, contentDescription = "Close", tint = MaterialTheme.colorScheme.onPrimary)
+                            Icon(Icons.Default.Close, contentDescription = stringResource(R.string.close), tint = MaterialTheme.colorScheme.onPrimary)
                         }
                     }
                 }

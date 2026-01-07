@@ -1,21 +1,21 @@
 package com.example.mobilecomputingproject.data.repository
 
 import android.util.Log
-import com.example.mobilecomputingproject.data.local.AppDatabase
+import com.example.mobilecomputingproject.data.api.JsonPlaceholderApi
+import com.example.mobilecomputingproject.data.local.dao.PhotoDao
 import com.example.mobilecomputingproject.data.local.entity.toDomain
 import com.example.mobilecomputingproject.data.local.entity.toEntity
-import com.example.mobilecomputingproject.data.api.RetrofitInstance
 import com.example.mobilecomputingproject.domain.model.Photo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-class PhotoRepository(
-    private val db: AppDatabase
-) {
 
-    private val photoDao = db.photoDao()
+class PhotoRepository(
+    private val photoDao: PhotoDao,
+    private val api: JsonPlaceholderApi
+) {
 
     /**
      * Returns a flow of photos from the local cache.
@@ -30,7 +30,7 @@ class PhotoRepository(
     suspend fun refreshPhotos() {
         withContext(Dispatchers.IO) {
             try {
-                val apiPhotos = RetrofitInstance.api.getPhotos()
+                val apiPhotos = api.getPhotos()
                 val localPhotos = photoDao.getAllPhotos().first()
                 val favoritePhotoIds = localPhotos.filter { it.isFavorite }.map { it.id }.toSet()
 
@@ -60,7 +60,7 @@ class PhotoRepository(
     suspend fun refreshPhoto(id: Int) {
         withContext(Dispatchers.IO) {
             try {
-                val apiPhoto = RetrofitInstance.api.getPhotoById(id)
+                val apiPhoto = api.getPhotoById(id)
                 photoDao.insertAll(listOf(apiPhoto.toEntity()))
             } catch (e: Exception) {
                 Log.e("Repository", "Error fetching photo $id: ${e.message}")

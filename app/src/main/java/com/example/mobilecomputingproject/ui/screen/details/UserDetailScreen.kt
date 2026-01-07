@@ -21,9 +21,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.mobilecomputingproject.R
 import com.example.mobilecomputingproject.ui.viewmodel.details.UserDetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,12 +39,12 @@ fun UserDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("User Details") },
+                title = { Text(stringResource(R.string.user_details)) },
                 navigationIcon = {
                     IconButton(onClick = { onBack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.back)
                         )
                     }
                 }
@@ -73,64 +74,64 @@ fun UserDetailScreen(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "Username: ${user.username}",
+                                text = stringResource(R.string.username, user.username),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Email: ${user.email}",
+                                text = stringResource(R.string.email, user.email),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Phone: ${user.phone}",
+                                text = stringResource(R.string.phone, user.phone),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Website: ${user.website}",
+                                text = stringResource(R.string.website, user.website),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "Address:",
+                                text = stringResource(R.string.address),
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Text(
-                                text = "  Street: ${user.address.street}",
+                                text = stringResource(R.string.street, user.address.street),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Text(
-                                text = "  Suite: ${user.address.suite}",
+                                text = stringResource(R.string.suite, user.address.suite),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Text(
-                                text = "  City: ${user.address.city}",
+                                text = stringResource(R.string.city, user.address.city),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Text(
-                                text = "  Zipcode: ${user.address.zipcode}",
+                                text = stringResource(R.string.zipcode, user.address.zipcode),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Text(
-                                text = "  Geo: ${user.address.geo.lat}, ${user.address.geo.lng}",
+                                text = stringResource(R.string.geo, user.address.geo.lat, user.address.geo.lng),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "Company:",
+                                text = stringResource(R.string.company),
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Text(
-                                text = "  Name: ${user.company.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }}",
+                                text = stringResource(R.string.company_name, user.company.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Text(
-                                text = "  Catch Phrase: ${user.company.catchPhrase}",
+                                text = stringResource(R.string.catch_phrase, user.company.catchPhrase),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Text(
-                                text = "  BS: ${user.company.bs}",
+                                text = stringResource(R.string.bs, user.company.bs),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         }

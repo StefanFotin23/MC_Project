@@ -21,9 +21,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.mobilecomputingproject.R
 import com.example.mobilecomputingproject.ui.viewmodel.details.AlbumDetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,12 +39,12 @@ fun AlbumDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Album Details") },
+                title = { Text(stringResource(R.string.album_details)) },
                 navigationIcon = {
                     IconButton(onClick = { onBack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.back)
                         )
                     }
                 }
@@ -73,7 +74,7 @@ fun AlbumDetailScreen(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "User ID: ${album.userId}",
+                                text = stringResource(R.string.user_id, album.userId),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         }

@@ -21,9 +21,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.mobilecomputingproject.R
 import com.example.mobilecomputingproject.ui.viewmodel.details.PostDetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,12 +39,12 @@ fun PostDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Post Details") },
+                title = { Text(stringResource(R.string.post_details)) },
                 navigationIcon = {
                     IconButton(onClick = { onBack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.back)
                         )
                     }
                 }

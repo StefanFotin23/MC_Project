@@ -1,10 +1,10 @@
 package com.example.mobilecomputingproject.data.repository
 
 import android.util.Log
-import com.example.mobilecomputingproject.data.local.AppDatabase
+import com.example.mobilecomputingproject.data.api.JsonPlaceholderApi
+import com.example.mobilecomputingproject.data.local.dao.PostDao
 import com.example.mobilecomputingproject.data.local.entity.toDomain
 import com.example.mobilecomputingproject.data.local.entity.toEntity
-import com.example.mobilecomputingproject.data.api.RetrofitInstance
 import com.example.mobilecomputingproject.domain.model.Post
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -13,10 +13,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class PostRepository(
-    private val db: AppDatabase
+    private val postDao: PostDao,
+    private val api: JsonPlaceholderApi
 ) {
-
-    private val postDao = db.postDao()
 
     /**
      * Returns a flow of posts from the local cache.
@@ -31,7 +30,7 @@ class PostRepository(
     suspend fun refreshPosts() {
         withContext(Dispatchers.IO) {
             try {
-                val apiPosts = RetrofitInstance.api.getPosts()
+                val apiPosts = api.getPosts()
                 Log.d("Repository", "Fetched ${apiPosts.size} posts from API")
 
                 // Get current favorite statuses from local DB
@@ -66,7 +65,7 @@ class PostRepository(
     suspend fun refreshPost(id: Int) {
         withContext(Dispatchers.IO) {
             try {
-                val apiPost = RetrofitInstance.api.getPostById(id)
+                val apiPost = api.getPostById(id)
                 postDao.insertAll(listOf(apiPost.toEntity()))
             } catch (e: Exception) {
                 Log.e("Repository", "Error fetching post $id: ${e.message}")
@@ -89,7 +88,7 @@ class PostRepository(
     suspend fun refreshPostsByUser(userId: Int) {
         withContext(Dispatchers.IO) {
             try {
-                val apiPosts = RetrofitInstance.api.getPostsByUser(userId)
+                val apiPosts = api.getPostsByUser(userId)
                 Log.d("Repository", "Fetched ${apiPosts.size} posts from API for user $userId")
 
                 // Get current favorite statuses from local DB

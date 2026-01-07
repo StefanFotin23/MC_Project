@@ -1,10 +1,10 @@
 package com.example.mobilecomputingproject.data.repository
 
 import android.util.Log
-import com.example.mobilecomputingproject.data.local.AppDatabase
+import com.example.mobilecomputingproject.data.api.JsonPlaceholderApi
+import com.example.mobilecomputingproject.data.local.dao.UserDao
 import com.example.mobilecomputingproject.data.local.entity.toDomain
 import com.example.mobilecomputingproject.data.local.entity.toEntity
-import com.example.mobilecomputingproject.data.api.RetrofitInstance
 import com.example.mobilecomputingproject.domain.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -12,10 +12,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class UserRepository(
-    private val db: AppDatabase
+    private val userDao: UserDao,
+    private val api: JsonPlaceholderApi
 ) {
-
-    private val userDao = db.userDao()
 
     /**
      * Returns a flow of users from the local cache.
@@ -30,7 +29,7 @@ class UserRepository(
     suspend fun refreshUsers() {
         withContext(Dispatchers.IO) {
             try {
-                val apiUsers = RetrofitInstance.api.getUsers()
+                val apiUsers = api.getUsers()
                 Log.d("Repository", "Fetched ${apiUsers.size} users from API")
                 userDao.insertAll(apiUsers.map { it.toEntity() })
             } catch (e: Exception) {
@@ -50,7 +49,7 @@ class UserRepository(
     suspend fun refreshUser(id: Int) {
         withContext(Dispatchers.IO) {
             try {
-                val apiUser = RetrofitInstance.api.getUserById(id)
+                val apiUser = api.getUserById(id)
                 userDao.insertAll(listOf(apiUser.toEntity()))
             } catch (e: Exception) {
                 Log.e("Repository", "Error fetching user $id: ${e.message}")

@@ -28,9 +28,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.mobilecomputingproject.R
 import com.example.mobilecomputingproject.ui.viewmodel.list.TodoListViewModel
 
 @Composable
@@ -49,7 +50,7 @@ fun TodoListScreen(
 
             uiState.todos.isEmpty() -> {
                 Text(
-                    text = "No todos available",
+                    text = stringResource(R.string.no_todos_available),
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
@@ -78,13 +79,13 @@ fun TodoListScreen(
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
-                                        text = "User ID: ${todo.userId}",
+                                        text = stringResource(R.string.user_id, todo.userId),
                                         style = MaterialTheme.typography.bodyMedium
                                     )
                                 }
                                 Icon(
                                     imageVector = if (todo.completed) Icons.Default.Check else Icons.Default.Close,
-                                    contentDescription = if (todo.completed) "Completed" else "Not Completed",
+                                    contentDescription = if (todo.completed) stringResource(R.string.completed) else stringResource(R.string.not_completed),
                                     tint = if (todo.completed) Color.Green else Color.Red,
                                     modifier = Modifier.padding(start = 8.dp)
                                 )

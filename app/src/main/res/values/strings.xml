@@ -1,3 +1,79 @@
 <resources>
     <string name="app_name">MCP News</string>
+
+    <!-- ExploreScreen -->
+    <string name="explore">Explore</string>
+    <string name="refreshing">Refreshing...</string>
+    <string name="error_prefix">Error: </string>
+    <string name="add_favorites_discover_more">Add favorites and then discover more!</string>
+
+    <!-- UserListScreen -->
+    <string name="no_users_available">No users available</string>
+
+    <!-- TodoListScreen -->
+    <string name="no_todos_available">No todos available</string>
+    <string name="user_id">User ID: %1$d</string>
+
+    <!-- PostListScreen -->
+    <string name="posts">Posts</string>
+    <string name="photos">Photos</string>
+    <string name="favorites">Favorites</string>
+    <string name="filters">Filters</string>
+    <string name="search_by_author">Search by author</string>
+    <string name="clear_search">Clear search</string>
+    <string name="clear_filter">Clear filter</string>
+    <string name="by_author">by %1$s</string>
+    <string name="toggle_favorite">Toggle Favorite</string>
+    <string name="close">Close</string>
+    <string name="filter_by_top_rated">Filter by Top Rated</string>
+    <string name="filter_by_author">Filter by Author</string>
+
+
+    <!-- CommentListScreen -->
+    <string name="no_comments_available">No comments available</string>
+
+    <!-- PhotoListScreen -->
+    <string name="back">Back</string>
+    <string name="filter_by_favorites">Filter by Favorites</string>
+    <string name="search_by_album">Search by album</string>
+    <string name="clear_filters">Clear Filters</string>
+    <string name="album">Album</string>
+    <string name="photo_placeholder">Photo placeholder</string>
+    <string name="filter_by_album">Filter by Album</string>
+
+    <!-- AlbumListScreen -->
+    <string name="no_albums_available">No albums available</string>
+
+    <!-- UserDetailScreen -->
+    <string name="user_details">User Details</string>
+    <string name="username">Username: %1$s</string>
+    <string name="email">Email: %1$s</string>
+    <string name="phone">Phone: %1$s</string>
+    <string name="website">Website: %1$s</string>
+    <string name="address">Address:</string>
+    <string name="street">\tStreet: %1$s</string>
+    <string name="suite">\tSuite: %1$s</string>
+    <string name="city">\tCity: %1$s</string>
+    <string name="zipcode">\tZipcode: %1$s</string>
+    <string name="geo">\tGeo: %1$s, %2$s</string>
+    <string name="company">Company:</string>
+    <string name="company_name">\tName: %1$s</string>
+    <string name="catch_phrase">\tCatch Phrase: %1$s</string>
+    <string name="bs">\tBS: %1$s</string>
+
+    <!-- TodoDetailScreen -->
+    <string name="todo_details">Todo Details</string>
+    <string name="completed">Completed: </string>
+    <string name="not_completed">Not Completed</string>
+
+    <!-- PhotoDetailScreen -->
+    <string name="photo_details">Photo Details</string>
+    <string name="album_id">Album ID: %1$d</string>
+
+    <!-- AlbumDetailScreen -->
+    <string name="album_details">Album Details</string>
+
+    <!-- PostDetailScreen -->
+    <string name="post_details">Post Details</string>
+
 </resources>

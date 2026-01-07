@@ -44,9 +44,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
+import androidx.compose.ui.res.stringResource
+import com.example.mobilecomputingproject.R
 import com.example.mobilecomputingproject.domain.model.Post
 import com.example.mobilecomputingproject.domain.model.Photo
 import com.example.mobilecomputingproject.ui.viewmodel.explore.ContentType
@@ -61,16 +61,14 @@ import com.example.mobilecomputingproject.ui.viewmodel.list.PostListViewModel
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.ui.text.style.TextOverflow
-import com.example.mobilecomputingproject.ui.theme.LightningBlue
 import androidx.compose.ui.text.style.TextAlign
 import com.example.mobilecomputingproject.ui.screen.list.PostDetailPopup
 import androidx.compose.material.icons.outlined.PhotoCamera
-import com.example.mobilecomputingproject.ui.theme.LightningTurquoise
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExploreScreen(
-    navController: NavController,
+    onNavigateBack: () -> Unit,
     viewModel: ExploreViewModel = hiltViewModel(),
     postListViewModel: PostListViewModel = hiltViewModel(), // Inject PostListViewModel
     photoListViewModel: PhotoListViewModel = hiltViewModel() // Inject PhotoListViewModel
@@ -86,23 +84,22 @@ fun ExploreScreen(
                     Row(
                         modifier = Modifier.clickable {
                             viewModel.loadExploreContent()
-                            Toast.makeText(context, "Refreshing...", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.refreshing), Toast.LENGTH_SHORT).show()
                         },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
                             Icons.Default.Explore,
-                            contentDescription = "Explore",
+                            contentDescription = stringResource(R.string.explore),
                             modifier = Modifier.padding(end = 8.dp)
                         )
-                        Text(text = "Explore")
+                        Text(text = stringResource(R.string.explore))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
-                navigationIcon = {},
-                actions = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
@@ -126,13 +123,13 @@ fun ExploreScreen(
                 val isPostsSelected = uiState.selectedContentType == ContentType.POSTS
                 val postsBackgroundBrush = if (isPostsSelected) Brush.linearGradient(
                     listOf(
-                        Color(0xFF32527B),
-                        Color(0xFF75E9E4)
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.secondary
                     )
                 ) else null
                 val postsTextColor = if (isPostsSelected) Color.White else Color.Black
                 val postsBorderBrush =
-                    Brush.linearGradient(listOf(Color(0xFF32527B), Color(0xFF75E9E4)))
+                    Brush.linearGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary))
 
                 Box(
                     modifier = Modifier
@@ -146,20 +143,20 @@ fun ExploreScreen(
                         .clickable { viewModel.toggleContentType(ContentType.POSTS) },
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Posts", color = postsTextColor, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.posts), color = postsTextColor, fontWeight = FontWeight.Bold)
                 }
 
                 // Photos Filter Box
                 val isPhotosSelected = uiState.selectedContentType == ContentType.PHOTOS
                 val photosBackgroundBrush = if (isPhotosSelected) Brush.linearGradient(
                     listOf(
-                        Color(0xFF32527B),
-                        Color(0xFF75E9E4)
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.secondary
                     )
                 ) else null
                 val photosTextColor = if (isPhotosSelected) Color.White else Color.Black
                 val photosBorderBrush =
-                    Brush.linearGradient(listOf(Color(0xFF32527B), Color(0xFF75E9E4)))
+                    Brush.linearGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary))
 
                 Box(
                     modifier = Modifier
@@ -173,20 +170,20 @@ fun ExploreScreen(
                         .clickable { viewModel.toggleContentType(ContentType.PHOTOS) },
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Photos", color = photosTextColor, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.photos), color = photosTextColor, fontWeight = FontWeight.Bold)
                 }
             }
 
             if (uiState.isLoading) {
                 CircularProgressIndicator()
             } else if (uiState.error != null) {
-                Text(text = "Error: ${uiState.error}", color = MaterialTheme.colorScheme.error)
+                Text(text = stringResource(R.string.error_prefix) + uiState.error, color = MaterialTheme.colorScheme.error)
             } else if (uiState.posts.isEmpty() && uiState.photos.isEmpty()) {
                 Text(
-                    text = "Add favorites and then discover more!",
+                    text = stringResource(R.string.add_favorites_discover_more),
                     modifier = Modifier.align(Alignment.CenterHorizontally).padding(16.dp),
                     style = MaterialTheme.typography.headlineSmall.copy(
-                        brush = Brush.linearGradient(listOf(LightningBlue, LightningTurquoise))
+                        brush = Brush.linearGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary))
                     ),
                     textAlign = TextAlign.Center
                 )
@@ -245,20 +242,19 @@ fun ExplorePostItem(post: Post, author: User?, onClick: (Post) -> Unit) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Brush.verticalGradient(listOf(LightningBlue, LightningTurquoise)))
+                    .background(Brush.verticalGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary)))
                     .padding(16.dp)
             ) {
                 Text(
                     text = post.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
+                    style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
                 author?.let {
                     Text(
-                        text = "by ${it.name}",
+                        text = stringResource(R.string.by_author, it.name),
+                        style = MaterialTheme.typography.bodyLarge,
                         fontStyle = FontStyle.Italic,
-                        fontSize = 16.sp,
                         color = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.End
@@ -297,7 +293,7 @@ fun ExplorePhotoItem(photo: Photo, album: Album?, author: User?, viewModel: Phot
                 error = {
                     Icon(
                         imageVector = Icons.Outlined.PhotoCamera,
-                        contentDescription = "Photo placeholder",
+                        contentDescription = stringResource(R.string.photo_placeholder),
                         modifier = Modifier.size(48.dp)
                     )
                 }
@@ -324,15 +320,15 @@ fun ExplorePhotoItem(photo: Photo, album: Album?, author: User?, viewModel: Phot
                         !photo.isFavorite
                     )
                 }) {
-                    Icon(favoriteIcon, contentDescription = "Toggle Favorite", tint = favoriteTint)
+                    Icon(favoriteIcon, contentDescription = stringResource(R.string.toggle_favorite), tint = favoriteTint)
                 }
             }
             Column(modifier = Modifier.padding(8.dp)) {
                 author?.let {
                     Text(
-                        text = "by ${it.name}",
+                        text = stringResource(R.string.by_author, it.name),
+                        style = MaterialTheme.typography.bodyMedium,
                         fontStyle = FontStyle.Italic,
-                        fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 }
@@ -340,12 +336,12 @@ fun ExplorePhotoItem(photo: Photo, album: Album?, author: User?, viewModel: Phot
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             Icons.Default.Photo,
-                            contentDescription = "Album",
+                            contentDescription = stringResource(R.string.album),
                             modifier = Modifier.size(16.dp)
                         )
                         Text(
                             text = it.title.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
-                            fontSize = 14.sp,
+                            style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.padding(start = 4.dp)
                         )

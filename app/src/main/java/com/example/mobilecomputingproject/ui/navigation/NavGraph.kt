@@ -25,11 +25,14 @@ fun NavGraph(navController: NavHostController) {
         startDestination = Routes.POST_LIST
     ) {
         composable(Routes.POST_LIST) {
-            PostListScreen(navController = navController)
+            PostListScreen(
+                onNavigateToPhotoList = { navController.navigate(Routes.PHOTO_LIST) },
+                onNavigateToExplore = { navController.navigate(Routes.EXPLORE) }
+            )
         }
 
         composable(Routes.EXPLORE) {
-            ExploreScreen(navController = navController)
+            ExploreScreen(onNavigateBack = { navController.popBackStack() })
         }
 
         composable(Routes.POST_DETAIL) { backStackEntry ->
@@ -73,7 +76,7 @@ fun NavGraph(navController: NavHostController) {
         }
 
         composable(Routes.PHOTO_LIST) {
-            PhotoListScreen(navController = navController)
+            PhotoListScreen(onNavigateBack = { navController.popBackStack() })
         }
 
         composable(Routes.PHOTO_DETAIL) { backStackEntry ->

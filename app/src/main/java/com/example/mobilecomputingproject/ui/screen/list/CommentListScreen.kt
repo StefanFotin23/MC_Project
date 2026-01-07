@@ -22,9 +22,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.mobilecomputingproject.R
 import com.example.mobilecomputingproject.ui.viewmodel.list.CommentListViewModel
 
 @Composable
@@ -43,7 +44,7 @@ fun CommentListScreen(
 
             uiState.comments.isEmpty() -> {
                 Text(
-                    text = "No comments available",
+                    text = stringResource(R.string.no_comments_available),
                     modifier = Modifier.align(Alignment.Center)
                 )
             }

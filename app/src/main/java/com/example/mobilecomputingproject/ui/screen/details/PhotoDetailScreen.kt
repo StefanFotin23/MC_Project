@@ -22,10 +22,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.example.mobilecomputingproject.R
 import com.example.mobilecomputingproject.ui.viewmodel.details.PhotoDetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,12 +41,12 @@ fun PhotoDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Photo Details") },
+                title = { Text(stringResource(R.string.photo_details)) },
                 navigationIcon = {
                     IconButton(onClick = { onBack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.back)
                         )
                     }
                 }
@@ -81,7 +82,7 @@ fun PhotoDetailScreen(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "Album ID: ${photo.albumId}",
+                                text = stringResource(R.string.album_id, photo.albumId),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         }
